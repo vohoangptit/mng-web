@@ -1,0 +1,119 @@
+<div th:replace="common/header"></div>
+
+<link th:href="@{/css/custom/jobmanagement/job-management.css}"
+      href="../../css/custom/jobmanagement/job-management.css" rel="stylesheet"
+      type="text/css" />
+
+<script th:inline="javascript">
+    var hasCreatePermission = [[${#strings.contains(session.userProfile.permission, 'CREATE_JOB')}]];
+    var hasUpdatePermission = [[${#strings.contains(session.userProfile.permission, 'UPDATE_JOB')}]];
+</script>
+<script type="text/javascript" th:src="@{/js/mxgraphlib/mxClient.js}" ></script>
+
+<script th:src="@{/js/my-job/execution.js}" type="text/javascript"></script>
+<div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor">
+    <div style="padding: 0% 0% 0% 2%;">
+        <label style="margin:1% 0% 0% 0.5%">
+            <span style="font-weight:600; font-size:20px; color:#333333">My Job</span>
+            <span style="font-weight:100; font-size:25px; color:#686868;">&nbsp|&nbsp</span>
+        </label>
+        <label style="margin:2% 0% 0% 0.5%">
+            <span> Home</span>
+            <span> &nbsp &gt; &nbsp</span>
+            <span> Job Execution</span>
+
+
+        </label>
+    </div>
+    <!-- begin:: Content -->
+    <div class="kt-content  kt-grid__item kt-grid__item--fluid" id="kt_content">
+        <div class="alert alert-light alert-elevate row">
+            <div class="col-md-12">
+                <br>
+                <div class="row border-job-information">
+                    <label class="text-job-information">Job Execution Information</label>
+                    <div class="col-md-12 row form-group" style="margin-top: 20px;">
+                        <label class="col-md-2 col-form-label" >Job Name <span class="red">*</span></label>
+                        <div class="col-md-2">
+                            <div>
+                                <label class="col-form-label" id="jobNameLbl"></label>
+                                <input type="hidden" id="jobexeid" value="" />
+                                <input type="hidden" id="jobname" value="" />
+                                <input type="hidden" id="playbookname" value="" />
+                                <input type="hidden" id="jobid" value="" />
+                                <input type="hidden" id="startExeDate" value="" />
+                                <input type="hidden" id="endExeDate" value="" />
+                            </div>
+                        </div>
+                        <label class="col-md-2 col-form-label">Execution Date <span class="red">*</span></label>
+                        <div class="col-md-2">
+                            <div><label class="col-form-label" id="DateExec">  </label></div>
+                        </div>
+                        <label class="col-md-2 col-form-label">Execution Time<span class="red">*</span></label>
+                        <div class="col-md-2">
+                            <div><label class="col-form-label" id="TimeExec"> The job name is mandatory</label></div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 row form-group">
+                        <label class="col-md-2 col-form-label">Description</label>
+                        <div class="col-md-2">
+                            <div><label class="col-form-label" id="descriptionJob"> The job name is mandatory</label></div>
+                        </div>
+                        <label class="col-md-2 col-form-label">Planer<span class="red">*</span></label>
+                        <div class="col-md-3">
+                            <div><label class="col-form-label" id="plannerName"> The job name is mandatory</label></div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 row form-group">
+                        <label class="col-md-2 col-form-label">Worflow Name<span class="red">*</span> </label>
+                        <div class="col-md-2">
+                            <div><label class="col-form-label" id="workflowName"> The job name is mandatory</label></div>
+                        </div>
+                        <label class="col-md-2 col-form-label">Assignnee<span class="red">*</span> </label>
+                        <div class="col-md-3">
+                            <div><label class="col-form-label" id="assigneeName"> The job name is mandatory</label></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col" style="width: 100%;">
+                <div class="kt-radio-inline" style="float: right">
+                    <button type="button" class="btn btn-add-default" id="btnExeJob">
+                        <em class="la la-play"></em>
+                        Execute
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-12" id="log-div">
+                <br>
+                <div class="row border-job-information">
+                    <label class="text-job-information">Job Execution Log</label>
+                    <div class="col-md-12 row form-group overflow-auto" style="margin-top: 20px;height: 400px;">
+                        <div class="col-md-12"><label class="col-md-12 col-form-label" id="executionlog"></label> </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12" id="action-div-log" style="width: 100%;">
+                <div class="kt-radio-inline" style="float: right;">
+                    <button type="button" class="btn btn-cancel" id="btnCancel2Job">
+                        <em class="la la-times-circle"></em>
+                        Stop
+                    </button>
+                    <button type="button" class="btn btn-add-default" id="btnExportJob">
+                        <em class="la la-save"></em>
+                        Export Logs
+                    </button>
+                    <button type="button" class="btn btn-cancel" id="btnCancel1Job">
+                        <em class="la la-times-circle"></em>
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- end:: Content -->
+
+</div>
+
+<div th:replace="common/footer"></div>

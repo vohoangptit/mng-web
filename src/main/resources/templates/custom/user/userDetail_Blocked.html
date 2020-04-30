@@ -1,0 +1,264 @@
+<div th:replace="common/header"></div>
+
+<link th:href="@{css/custom/user/userDetail.css}"
+	href="../../css/custom/user/userDetail.css" rel="stylesheet"
+	type="text/css" />
+
+<script type="text/javascript">
+	$( document ).ready(function() {
+		
+		$("#btnAddNewUser").on('click', function(){
+			$(".selecteddisplay").append('<span data-text="DefaultText" data-value="1" class="selectchoice-tag">'+"DefaultText"+
+		                                    '<button class= "selectchoice-button" type = "button" >×</button>'+
+		                                '</div >');
+			removeDisplayItem();
+		});
+
+		removeDisplayItem();
+		function removeDisplayItem(){
+			$(".selectchoice-button").on('click', function(){
+				this.closest('.selectchoice-tag').remove();
+			});
+		};
+
+		$('.kt-checkbox').click(function(event){
+			event.stopPropagation();
+		});
+
+	});
+</script>
+
+<div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor">
+
+	<!-- begin:: Content -->
+	<div class="kt-content  kt-grid__item kt-grid__item--fluid row"
+		id="kt_content">
+
+		<div class="col-md-3">
+			<div class="row">
+				<div class="col-md-3"></div>
+				<div class="col-md-7">
+					<div class="alert-light alert-elevate adduser-image-mb">
+						<div class="adduser-image-size"></div>
+					</div>
+
+					<div class="adduser-uploadbtn">
+						<input class="form-control" type="button" id="example-text-input"
+							value="Upload image">
+					</div>
+				</div>
+				<div class="col-md-2"></div>
+			</div>
+		</div>
+
+		<div class="col-md-8">
+			<div class="alert alert-light alert-elevate">
+				<div class="kt-portlet">
+
+					<!--begin::Form-->
+					<div class="kt-form">
+						<div>
+							<div class="row">
+								<label for="example-text-input redmarker"
+									class="col-md-12 col-form-label"> This user has been
+									blocked after 5 failed login attempts </label>
+							</div>
+							<div class="form-group row">
+								<label for="example-text-input" class="col-3 col-form-label">
+									Email <span class="redmarker">*</span>
+								</label>
+								<div class="col-9">
+									<input class="form-control" type="text" id="example-text-input">
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="example-text-input" class="col-3 col-form-label">
+									Full Name <span class="redmarker">*</span>
+								</label>
+								<div class="col-9">
+									<input class="form-control" type="text" id="example-text-input">
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="exampleSelect1" class="col-3 col-form-label">
+									User Group <span class="redmarker">*</span>
+								</label>
+								<div class="col-6">
+									<div class="dropdown">
+										<button
+											class="btn btn-secondary dropdown-toggle adduser-drop-width"
+											type="button" id="dropdownMenuButton" data-toggle="dropdown"
+											aria-haspopup="true" aria-expanded="false">Select
+											the User Groups</button>
+										<div class="dropdown-menu adduser-drop-width"
+											aria-labelledby="dropdownMenuButton">
+											<div>
+												<div class="form-group row">
+													<div class="col-md-1"></div>
+													<div class="col-md-10">
+														<input type="email" class="form-control"
+															aria-describedby="emailHelp"
+															placeholder="Select the User Groups">
+													</div>
+													<div class="col-md-1"></div>
+												</div>
+												<div class="form-group row">
+													<div class="col-md-1"></div>
+													<div class="col-md-10">
+														<div class="kt-checkbox-list">
+															<label class="kt-checkbox"> <input
+																type="checkbox"> Default <span></span>
+															</label> <label class="kt-checkbox"> <input
+																type="checkbox"> Default <span></span>
+															</label> <label class="kt-checkbox"> <input
+																type="checkbox"> Default <span></span>
+															</label> <label class="kt-checkbox"> <input
+																type="checkbox"> Default <span></span>
+															</label>
+
+														</div>
+													</div>
+													<div class="col-md-1"></div>
+												</div>
+												<div style="text-align: center;">
+													<div class="kt-form__actions">
+														<button type="reset" class="btn btn-secondary btn-sm">Cancel</button>
+														<button type="button" class="btn btn-primary btn-sm"
+															id="btnAddNewUser">Add</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<label for="example-text-input" class="col-3 col-form-label"></label>
+								<div class="col-9">
+									<div class="selecteddisplay"></div>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="exampleSelect1" class="col-3 col-form-label">Department</label>
+								<div class="col-9">
+									<select class="form-control" id="exampleSelect1">
+										<option>1</option>
+										<option>2</option>
+										<option>3</option>
+										<option>4</option>
+										<option>5</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="exampleSelect1" class="col-3 col-form-label">Job
+									Title</label>
+								<div class="col-9">
+									<select class="form-control" id="exampleSelect1">
+										<option>1</option>
+										<option>2</option>
+										<option>3</option>
+										<option>4</option>
+										<option>5</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="exampleSelect1" class="col-3 col-form-label">Status</label>
+								<div class="col-9">
+									<label for="exampleSelect1" class="col-form-label">Blocked</label>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<span style="margin-right: 2%;"><button
+											class="btn btn-secondary shadow">Reset Password</button></span> 
+									<span><button
+											class="btn btn-secondary shadow" data-toggle="modal" data-target="#kt_modal_3">Unblock User</button></span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!--end::Form-->
+					
+				</div>
+			</div>
+
+			<div>
+				<div class="kt-form__actions adduser-textright">
+					<button type="reset" class="btn btn-secondary">Cancel</button>
+					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#kt_modal_1">Save</button>
+					<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#kt_modal_2">Delete</button>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<!-- end:: Content -->
+
+</div>
+
+<div class="modal fade" id="kt_modal_1" tabindex="-1" role="dialog"
+	aria-labelledby="exampleModalLabel" style="display: none;"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Update Confirmation</h5>
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p>Content</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+				<button type="button" class="btn btn-primary">Yes</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="kt_modal_2" tabindex="-1" role="dialog"
+	aria-labelledby="exampleModalLabel" style="display: none;"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Delete Confirmation</h5>
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p>Content</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+				<button type="button" class="btn btn-primary">Yes</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="kt_modal_3" tabindex="-1" role="dialog"
+	aria-labelledby="exampleModalLabel" style="display: none;"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Unblock User Confirmation</h5>
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p>Content</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+				<button type="button" class="btn btn-primary">Yes</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div th:replace="common/footer"></div>

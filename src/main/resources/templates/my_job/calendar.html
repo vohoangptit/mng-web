@@ -1,0 +1,163 @@
+<div th:replace="common/header"></div>
+<link th:href="@{/css/custom/jobplanning/calendar.css}"
+      href="../../css/custom/jobplanning/calendar.css" rel="stylesheet"
+      type="text/css"/>
+<script th:src="@{/js/my-job/calendar.js}" type="text/javascript"></script>
+<div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor">
+    <div class="kt-content  kt-grid__item kt-grid__item--fluid" id="kt_content">
+        <div class="alert alert-light alert-elevate row">
+            <div id="calendar"></div>
+        </div>
+
+    </div>
+
+</div>
+<div class="modal fade" id="kt_modal_edit" tabindex="-1"
+     role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detail Job Assignment</h5>
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="border rounded p-3 m-3 title-parent">
+                            <label class="title-child font-weight-bold">Job
+                                Selection</label>
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label class="col-form-label">Job Name</label> <label
+                                        class="col-form-label text-danger">*</label>
+                                </div>
+                                <div class="col-md-7 off-set-1">
+                                    <label class="col-form-label" id="jobNameLbl"></label>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label class="col-form-label">Description</label>
+                                </div>
+                                <div class="col-md-7 off-set-1">
+                                    <label class="col-form-label" id="descriptionJob"></label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <label class="col-form-label">Workflow Name</label> <label
+                                        class="col-form-label text-danger">*</label>
+                                </div>
+                                <div class="col-md-7 off-set-1">
+                                    <label class="col-form-label" id="workflowName"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border rounded p-3 m-3 title-parent">
+                            <label class="title-child font-weight-bold">Assignment</label>
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label>Execution Date</label> <label
+                                        class="col-form-label text-danger">*</label>
+                                </div>
+                                <div class="col-md-7 off-set-1">
+                                    <label class="col-form-label" id="DateExec"></label>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label class="col-form-label">Execution Time</label> <label
+                                        class="col-form-label text-danger">*</label>
+                                </div>
+                                <div class="col-md-7 off-set-1">
+                                    <label class="col-form-label" id="TimeExec"></label>
+                                </div>
+
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label class="col-form-label">Planner</label> <label
+                                        class="col-form-label text-danger">*</label>
+                                </div>
+                                <div class="col-md-7 off-set-1">
+                                    <label class="col-form-label" id="plannerName"></label>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label class="col-form-label">Assignee</label> <label
+                                        class="col-form-label text-danger">*</label>
+                                </div>
+                                <div class="col-md-7 off-set-1">
+                                    <label class="col-form-label" id="assigneeName"></label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <label class="col-form-label">Job Status</label>
+                                </div>
+                                <div class="col-md-7 off-set-1">
+                                    <label class="col-form-label" id="jobAssignStatus"></label>
+                                    <input type="hidden" id="workflowIdforExe" value="" />
+                                    <input type="hidden" id="rowId" value="" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center" id="action_job"
+                             th:if="${#strings.contains(session.userProfile.permission, 'ACCEPT_REJECT_JOB')}">
+                            <button class="shadow btn btn-delete-default"
+                                    id="btnRejectJob">Reject
+                            </button>
+                            <button class="shadow btn btn btn-add-default"
+                                    id="btnAcceptJob">Confirm
+                            </button>
+                        </div>
+                        <div class="text-center" id="action_exe_job" th:if="${#strings.contains(session.userProfile.permission, 'ACCEPT_REJECT_JOB')}">
+
+                            <button class="shadow btn btn-add-default"
+                                    id="btnPLayJob">Execute
+                            </button>
+                            <button class="shadow btn btn btn-delete-default"
+                                    id="btnCancelJob">Cancel
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="border rounded contentWorkflowDetail"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="kt_modal_accept_reject" tabindex="-1"
+     role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div style="display: none;">
+                    <input value="" id="idJobConfirm">
+                </div>
+                <p id="pConfirm"></p>
+                <div id="txt_view_reason">
+                    <textarea placeholder="Text your reason" id="txtReason"></textarea>
+                    <p id="error_reason" class="d-none font-italic text-danger">Reason cannot be empty</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-cancel" data-dismiss="modal">No</button>
+                <button type="button" class="btn btn-add-default"
+                        id="btnConfirm">Yes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="common/footer"></div>

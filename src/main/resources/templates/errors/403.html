@@ -1,0 +1,27 @@
+<div th:replace="common/header"></div>
+
+<link th:href="@{/css/errors/403.css}" href="../../css/errors/403.css" rel="stylesheet" type="text/css" />
+
+					
+<div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor">
+						
+	<!-- begin:: Content -->
+	<div th:fragment="kt_content" class="kt-content  kt-grid__item kt-grid__item--fluid" id="kt_content">
+		<div class="alert alert-light alert-elevate row centered">
+			<div class="">
+				<p class="red center" th:utext="#{message.unauthorized}">Unauthorized</p>
+				<div style="display:inline-block;position:relative;top:-20px">
+					<img alt="" th:src="@{/images/logos/exclaim.png}" src="images/logos/exclaim.png" width="25px" height="25px">
+				</div>
+				<div style="display:inline-block">	
+					<span th:utext="#{message.no.credentials}">You do not have the proper credentials to access this page.</span>
+					<p><a href="/"><span th:utext="#{message.back.profile.page}">Back to My Profile page</span></a></p>
+				</div>	
+			</div>						 	
+		</div>
+	</div>
+	<!-- end:: Content -->
+	
+</div>
+					
+<div th:replace="common/footer"></div>

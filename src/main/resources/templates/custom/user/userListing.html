@@ -1,0 +1,406 @@
+<div th:replace="common/header"></div>
+<link th:href="@{/css/custom/user/userListing.css}" href="../../css/custom/user/userListing.css" rel="stylesheet"
+      type="text/css"/>
+
+<script th:inline="javascript">
+    var hasEditPermission = [[${#strings.contains(session.userProfile.permission, 'UPDATE_USERS')}]];
+    var hasDeletePermission = [[${#strings.contains(session.userProfile.permission, 'DELETE_USERS')}]];
+    var hasEditUser = [[${editUserStatus}]];
+    var hasCreateUser = [[${addUserStatus}]];
+</script>
+
+<link th:unless="${#strings.contains(session.userProfile.permission, 'VIEW_USER_LISTING')}"
+      th:href="@{/css/errors/403.css}" href="../../css/errors/403.css" rel="stylesheet" type="text/css"/>
+
+<script th:inline="javascript" th:src="@{/js/custom/user-listing.js}"></script>
+<script th:inline="javascript" th:src="@{/js/bootstrap/bootstrap-datepicker.js}"></script>
+<script th:inline="javascript" th:src="@{/js/custom/moment.js}"></script>
+
+
+<div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor">
+    <div style="padding: 0% 0% 0% 2%;">
+        <label style="margin:1% 0% 0% 0.5%">
+            <span style="font-weight:600; font-size:20px; color:#333333">Users</span>
+            <span style="font-weight:100; font-size:25px; color:#686868;">&nbsp|&nbsp</span>
+        </label>
+        <label style="margin:2% 0% 0% 0.5%">
+            <span> Home</span>
+            <span> &nbsp &gt; &nbsp</span>
+            <span> System</span>
+            <span> &nbsp &gt; &nbsp</span>
+            <span style="color: #e1261c;"> Users</span>
+        </label>
+    </div>
+    <!-- begin:: Content -->
+    <div th:unless="${#strings.contains(session.userProfile.permission, 'VIEW_USER_LISTING')}">
+        <div th:replace="errors/403.html :: kt_content"></div>
+    </div>
+    <div th:if="${#strings.contains(session.userProfile.permission, 'VIEW_USER_LISTING')}"
+         class="kt-content  kt-grid__item kt-grid__item--fluid" id="kt_content">
+        <div class="alert alert-light alert-elevate row">
+            <div th:replace="custom/status/statusUser"></div>
+            <div class="col-md-12">
+                <br/>
+                <!--begin: Search Form -->
+                <div class="row search-padd" style="padding-bottom:0%">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control search-input border-input"
+                               placeholder="Filter by Full Name, Email, Mobile" id="generalSearch">
+                        <span class="search-icon">
+							<span><em class="la la-search"></em></span>
+						</span>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="input-group date">
+                            <input placeholder="From (Last login date)" type="text" class="form-control dt"
+                                   name="fromLastLogin" value="" id="kt_datepicker_3">
+                            <span>
+									<em class="la la-calendar"></em>
+							</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="input-group date">
+                            <input placeholder="To (Last login date)" type="text" class="form-control dt"
+                                   name="toLastLogin" value="" id="kt_datepicker_3">
+                            <span>
+									<em class="la la-calendar"></em>
+							</span>
+                        </div>
+                        <div id="dateRangeError" class="red" style="display:none"
+                             th:utext="#{message.user.date.range.error}">To date must be later than from date.
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div>
+                            <a href="javascript:doSearch()" class="btn search-icon-listing btn-add-default">
+                                <em class="la la-search search-icon-right"></em>
+                            </a>&nbsp;
+                            <a href="javascript:reset()" class="btn reset-icon-listing btn-default">
+                                <em class="la la-refresh reset-icon-right"></em>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+                <!--end: Search Form -->
+                <div class="row">
+                    <div class="col-md-2">
+                        <div>
+							<span class="dropdown">
+							  <button class="btn btn-secondary dropdown-search" style="text-align:left" type="button"
+                                      id="groupDropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                      aria-expanded="false">
+							    User Group
+							    <span>
+									<em class="dropdown-icon dropdown-toggle"
+                                       style="position: absolute;left: 85%;top:40%;"></em>
+							  </span>
+							  </button>
+							  <span id="userGroupDropdown" class="dropdown-menu"
+                                    aria-labelledby="groupDropdownMenuButton">
+							  </span>
+							</span>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div style="text-align:left">
+							<span class="dropdown">
+							  <button class="btn btn-secondary dropdown-search" style="text-align:left" type="button"
+                                      id="departmentDropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                      aria-expanded="false">
+							    Department
+							    <span>
+									<em class="dropdown-icon dropdown-toggle"
+                                       style="position: absolute;left: 85%;top:40%;"></em>
+							  </span>
+							  </button>
+							  <span id="departmentDropdown" class="dropdown-menu"
+                                    aria-labelledby="departmentDropdownMenuButton">
+							  </span>
+							</span>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div style="text-align:left">
+							<span class="dropdown">
+							  <button class="btn btn-secondary dropdown-search" style="text-align:left" type="button"
+                                      id="jobTitleDropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                      aria-expanded="false">
+							    Job Title
+							    <span>
+									<em class="dropdown-icon dropdown-toggle"
+                                       style="position: absolute;left: 85%;top:40%;"></em>
+							  </span>
+							  </button>
+							  <span id="jobTitleDropdown" class="dropdown-menu"
+                                    aria-labelledby="jobTitleDropdownMenuButton">
+							  </span>
+							</span>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+                <div class="line-search"></div>
+                <br/>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div>
+                            <a th:if="${#strings.contains(session.userProfile.permission, 'UPDATE_USERS')}"
+                               href="javascript:unblockUser();" class="btn btn-default btn-icon-sm"><em
+                                    class="la la-unlock-alt"></em><span th:utext="#{message.user.unblock.user}">Unblock User</span></a>
+                            <a th:if="${#strings.contains(session.userProfile.permission, 'UPDATE_USERS')}"
+                               href="javascript:updateStatus();" class="btn btn-default btn-icon-sm"><span
+                                    th:utext="#{message.user.update.status}">Update Status</span></a>
+                            <a th:if="${#strings.contains(session.userProfile.permission, 'DELETE_USERSS')}"
+                               href="javascript:deleteUser();" class="btn btn-delete-default btn-icon-sm"><em
+                                    class="la la-trash"></em><span th:utext="#{message.delete}">Delete</span></a>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-right">
+                            <a th:if="${#strings.contains(session.userProfile.permission, 'CREATE_USERS')}"
+                               href="/addUser" class="btn btn-add-default btn-icon-sm">
+                                <span><em class="la la-plus font-weight-bolder text-white"></em></span>
+                                <span th:utext="#{message.user.add.user}">Add User</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <br/>
+            </div>
+
+            <div class="col-md-12">
+                <div class="userListingDatatable" id="kt_datatable"></div>
+
+                <div>
+                    <table id="header-fixed" class="table m-table m-table--head-bg-accent">
+						<caption class="d-none"></caption>
+						<tr class="d-none">
+							<th scope="col"></th>
+						</tr>
+					</table>
+                </div>
+            </div>
+
+            <!-- Unblock Modals -->
+            <div class="modal" id="unblockModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Confirm</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p th:utext="#{message.user.sure.unblock}">Are you sure you want to unblock these users?</p>
+                            <p id="unblockNames"></p>
+                            <p th:utext="#{message.user.unblock.warn}">*By clicking "Yes", this user will become Active,
+                                system will send a new email with login information to this user.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-add-default" onclick="confirmUnblockUser()"><span
+                                    th:utext="#{message.yes}">Yes</span></button>
+                            <button type="button" class="btn btn-cancel" data-dismiss="modal"><span
+                                    th:utext="#{message.no}">No</span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal" id="unblockSelectModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" th:utext="#{message.user.please.select}">Please select</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p th:utext="#{message.user.select.one.user}">Please select at least 1 user.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-add-default" data-dismiss="modal"><span
+                                    th:utext="#{message.ok}">OK</span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Unblock Modals -->
+
+            <!-- Update Status Modals -->
+            <div class="modal" id="statusModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" th:text="#{message.user.update.user.status}">Update user status</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p th:text="#{message.user.selected.user}">Selected users (<span
+                                    id="selectedUserStatusCount"></span>)</p>
+                            <div class="selectedUserTable" id="selectedUserTable"></div>
+                            <div class="form-group row">
+                                <div class="col-md-4">
+                                    <label for="message-text" class="form-control-label">Update Status</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="radio" name="activeOrInactive" value="true" checked="checked"/> <span
+                                        th:text="#{message.active}">Active</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="radio" name="activeOrInactive" value="false"/> <span
+                                        th:text="#{message.inactive}">Inactive</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <p id="selectOneUpdateUser" style="display:none; color:red"
+                               th:text="#{message.user.select.one.user}"></p>
+                            <button type="button" class="btn btn-add-default" onclick="confirmUpdateStatus()"><span
+                                    th:text="#{message.apply}">Apply</span></button>
+                            <button type="button" class="btn btn-cancel" data-dismiss="modal"><span
+                                    th:text="#{message.cancel}">Cancel</span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal" id="statusSelectModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" th:utext="#{message.user.please.select}">Please select</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p th:utext="#{message.user.select.one.user}">Please select at least 1 user.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-add-default" data-dismiss="modal"><span
+                                    th:utext="#{message.ok}">OK</span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Update Status Modals -->
+            <!-- Begin Delete Modals -->
+            <div class="modal" id="deleteSelectModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" th:utext="#{message.user.please.select}">Please select</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p th:utext="#{message.user.select.one.user}">Please select at least 1 user.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal"><span
+                                    th:utext="#{message.ok}">OK</span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal" id="stillActiveUsersModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" th:utext="#{message.user.users.still.active}">Users Still
+                                Active</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p><span th:utext="#{message.user.these.users.active}">These users are still active:</span>
+                                <span id="stillActiveUsersNames"></span>.</p>
+                            <p th:utext="#{message.user.delete.failed}">All deletes failed.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal"><span
+                                    th:utext="#{message.ok}">OK</span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal" id="stillActiveOneUserModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" th:utext="#{message.user.user.still.active}">User Still Active</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p th:utext="#{message.user.this.user.active}">This user is still active: <span
+                                    id="stillActiveUsername"></span>.</p>
+                            <p th:utext="#{message.user.delete.failed}">Delete failed.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal"><span
+                                    th:utext="#{message.ok}">OK</span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal" id="confirmDeleteModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" th:utext="#{message.user.delete.users}">Delete Users</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p th:utext="#{messsage.user.are.you.sure.delete}">Are you sure you want to delete these
+                                users?</p>
+                            <p id="deleteNames"></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" onclick="confirmDelete()"><span
+                                    th:utext="#{message.yes}">Yes</span></button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal"><span
+                                    th:utext="#{message.no}">No</span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal" id="confirmDeleteOneUserModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" th:utext="#{message.user.delete.user}">Delete User</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p th:utext="#{messsage.user.are.you.sure.delete.user}">Confirm delete this user?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" onclick="confirmDelete()"><span
+                                    th:text="#{message.apply}">Apply</span></button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal"><span
+                                    th:text="#{message.cancel}">Cancel</span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Delete Modals -->
+        </div>
+    </div>
+    <!-- end:: Content -->
+
+</div>
+
+<div th:replace="common/footer"></div>

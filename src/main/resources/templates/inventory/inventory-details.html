@@ -1,0 +1,451 @@
+<div th:replace="common/header"></div>
+
+<script th:inline="javascript">
+    var hasViewHostPermission = [[${#strings.contains(session.userProfile.permission, 'VIEW_HOST_LISTING')}]];
+    var hasCloneHostPermission = [[${#strings.contains(session.userProfile.permission, 'CREATE_HOST')}]];
+    var hasEditHostPermission = [[${#strings.contains(session.userProfile.permission, 'UPDATE_HOST')}]];
+    var hasDeleteHostPermission = [[${#strings.contains(session.userProfile.permission, 'DELETE_HOST')}]];
+    var hasViewGroupHostPermission = [[${#strings.contains(session.userProfile.permission, 'VIEW_GROUP_HOST_LISTING')}]];
+    var hasEditGroupHostPermission = [[${#strings.contains(session.userProfile.permission, 'UPDATE_GROUP_HOST')}]];
+    var hasDeleteGroupHostPermission = [[${#strings.contains(session.userProfile.permission, 'DELETE_GROUP_HOST')}]];
+</script>
+
+<link th:href="@{/css/custom/inventory/inventory-details.css}"
+	href="../../css/custom/inventory/inventory-details.css" rel="stylesheet"
+	type="text/css" />
+
+<script th:src="@{/js/custom/inventory-details.js}" type="text/javascript"></script>
+
+<div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor">
+	<div style="padding: 0% 0% 0% 2%;">
+            <label style="margin:1% 0% 0% 0.5%">
+				<span style="font-weight:600; font-size:20px; color:#333333">Inventory</span>
+				<span style="font-weight:100; font-size:25px; color:#686868;">&nbsp|&nbsp</span>
+			</label>                      
+			<label style="margin:2% 0% 0% 0.5%">
+				<span> Home</span>
+	            <span> &nbsp &gt; &nbsp</span>
+				<span> Master Data</span>
+				<span> &nbsp &gt; &nbsp</span>
+				<span style="color: #e1261c;"> Inventory Management</span>
+			</label>
+	</div>
+	<!-- begin:: Content -->
+	<div class="kt-content  kt-grid__item kt-grid__item--fluid" id="kt_content">
+
+<div class="alert alert-light alert-elevate row">
+	<div th:replace="custom/status/status"></div>
+    <div class="col-md-12 inventorybody hideclass">
+        <div class="kt-portlet__body">
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active setNumHost" style="color:#333333" data-toggle="tab" href="#" data-target="#kt_tabs_host" th:text = "${numHost}"></a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link setNumGroup" style="color:#333333" data-toggle="tab" href="#" data-target="#kt_tabs_group" id="tab-group" th:text = "${numGroup}"></a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane active" id="kt_tabs_host" role="tabpanel">
+                    <div class="col-md-12 row search-padd">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control search-input border-input" placeholder="Filter by Host Name, Status" id="hostSearchKey">
+                            <span class="search-icon">
+                                <span><em class="la la-search"></em></span>
+                            </span>
+                        </div>
+
+                        <div class="col-md-6 textright">
+                            <button type="button" class="btn btn-add-default" id="btnAddHost" th:if="${#strings.contains(session.userProfile.permission, 'CREATE_HOST')}">
+                            <em class="la la-plus"></em>
+                            Add Host</button>
+                            <label for="ImportFile" class="btn btn-accent btn-upload-container" style="margin-top: 6px;border-radius: 100px;border: solid 0.5px #1565c0;background-color: white;color: #1565c0 !important;">
+                                Import File
+                            </label>
+                            <input id="ImportFile" style="display:none;" type='file' accept=".csv" multiple>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="hideclass deletemessage" style="padding-top: 2%;">
+                            <div class="alert alert-success col-2" role="alert">
+                                <div class="alert-text">Delete successfully</div>
+                            </div>
+                        </div>
+
+                        <div class="userGroupListingDatatable" id="kt_datatable_host"></div>
+
+                        <div>
+                            <table id="header-fixed"
+                                   class="table m-table m-table--head-bg-accent">
+                                <caption class="d-none">x</caption>
+                                <tr class="d-none">
+                                    <th scope="col"></th>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="kt_tabs_group" role="tabpanel">
+                    <div class="col-md-12 row search-padd">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control search-input border-input" placeholder="Filter by Group Name, Status" id="groupSearchKey">
+                            <span class="search-icon">
+                                <span><em class="la la-search"></em></span>
+                            </span>
+                        </div>
+
+                        <div class="col-md-6 textright">
+                            <button type="button" class="btn btn-add-default" id="btnAddGroup" th:if="${#strings.contains(session.userProfile.permission, 'CREATE_GROUP_HOST')}">
+                            <em class="la la-plus"></em>Add Group</button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="hideclass deletemessage" style="padding-top: 2%;">
+                            <div class="alert alert-success col-2" role="alert">
+                                <div class="alert-text">Delete successfully</div>
+                            </div>
+                        </div>
+
+                        <div class="userGroupListingDatatable" id="kt_datatable_group"></div>
+
+                        <div>
+                            <table id="header-group-fixed"
+                                   class="table m-table m-table--head-bg-accent">
+                                <caption class="d-none"></caption>
+                                <tr class="d-none">
+                                    <th scope="col"></th>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12 row btnline2 hideclass" th:if="${#strings.contains(session.userProfile.permission, 'IMPORT_HOST')}">
+        <div class="col-md-6 text-center">
+            <div style="display: none" class="alert alert-success" role="alert" id="success-action-import"></div>
+            <div style="display: none;" class="alert alert-danger" role="alert" id="error-action-import"></div>
+        </div>
+        <div class="col-md-6 textright">
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="modHostConfirmation" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Host details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">�</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            	<div th:replace="custom/status/statusInventory"></div>
+                <div class="col-md-12">
+					<div class="row">
+						<div class="col-3 col-form-label">Host Name<span class="redmarker">*</span></div>
+						<div class="col-9 col-form-label">
+							<input class="form-control hideclass" type="text" value="" id="hostId">
+							<input class="form-control" type="text" value="" id="hostName">
+							<div class="redmarker valihostname hideclass">Host name is required</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-3 col-form-label">IP Address<span class="redmarker">*</span></div>
+						<div class="col-9 col-form-label">
+							<input class="form-control" type="text" value="" id="hostAddress">
+							<div class="redmarker valiipaddress hideclass">IP Address is required</div>
+							<div class="redmarker valiipaddressvalid hideclass">IP Address is invalid</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-3 col-form-label">Port<span class="redmarker">*</span></div>
+						<div class="col-9 col-form-label">
+							<input class="form-control" type="text" value="" id="hostPort">
+							<div class="redmarker valiportvalid hideclass">Port is invalid</div>
+						</div>
+					</div>
+                    <div class="row">
+                        <div class="col-3 col-form-label">User Name<span class="redmarker">*</span></div>
+                        <div class="col-9 col-form-label">
+                            <input class="form-control" type="text" value="" id="username">
+                            <div class="redmarker validateusername hideclass">Username is required</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3 col-form-label">Password<span class="redmarker">*</span></div>
+                        <div class="col-9 col-form-label">
+                            <input class="form-control" type="password" value="" id="password">
+                            <div class="redmarker validatepassword hideclass">Password is required</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3 col-form-label">Description</div>
+                        <div class="col-9 col-form-label">
+                            <textarea class="form-control" rows="3" id="hostDescription"></textarea>
+                        </div>
+                    </div>
+					<div class="row">
+						<div class="col-3 col-form-label">Status</div>
+						<div class="col-9 col-form-label">
+							<div class="kt-radio-inline">
+	                            <label class="kt-radio">
+	                                <input id="radioA" type="radio" value="true" name="hostradio4">Active
+	                                <span></span>
+	                            </label>
+	                            <label class="kt-radio">
+	                                <input id="radioI" type="radio" value="false" checked="checked" name="hostradio4">Inactive
+	                                <span></span>
+	                            </label>
+	                        </div>
+						</div>
+					</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+            	<button type="button" class="btn btn-add-default" id="btnHostSave">
+            	<em class="la la-floppy-o"></em>Save</button>
+                <button type="button" class="btn btn-cancel" data-dismiss="modal">
+                <em class="la la-times-circle"></em>Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modGroupConfirmation" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Group details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">�</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            	<div th:replace="custom/status/statusInventoryGroup"></div>
+                <div class="col-md-12">
+					<div class="row">
+						<div class="col-3 col-form-label">Group Name<span class="redmarker">*</span></div>
+						<div class="col-9 col-form-label">
+							<input class="form-control hideclass" type="text" value="" id="groupId">
+							<input class="form-control" type="text" value="" id="groupName">
+							<div class="redmarker valigroupname hideclass">Group Name is required</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-3 col-form-label">Host Group<span class="redmarker">*</span></div>
+						<div class="col-9 col-form-label">
+							<div class="dropdown">
+							    <button class="btn btn-secondary dropdown-toggle adduser-drop-width" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							        Select IP address
+							    </button>
+								<div class="redmarker valihostgroup hideclass">Host Group is required</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row tblTemp hideclass">
+						<div class="col-3 col-form-label"></div>
+						<div class="col-9 col-form-label">
+							<div>
+								<table class="table" id="tblTempSelectedIp">
+                                    <caption class="d-none">x</caption>
+				                    <thead>
+				                        <tr>
+				                            <th scope="col" style="width:20%">S/N</th>
+				                            <th scope="col" style="width:40%">Host Name</th>
+				                            <th scope="col" style="width:40%">IP Address</th>
+				                        </tr>
+				                    </thead>
+				                    <tbody></tbody>
+				                </table>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-3 col-form-label">Status</div>
+						<div class="col-9 col-form-label">
+							<div class="kt-radio-inline">
+	                            <label class="kt-radio">
+	                                <input id="groupRadioA" type="radio" value="true" name="groupradio">Active
+	                                <span></span>
+	                            </label>
+	                            <label class="kt-radio">
+	                                <input id="groupRadioI" type="radio" value="false" checked="checked" name="groupradio">Inactive
+	                                <span></span>
+	                            </label>
+	                        </div>
+						</div>
+					</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+             	<button type="button" class="btn btn-add-default" id="btnGroupSave">
+                	<em class="la la-floppy-o"></em>Save</button>
+				<button type="button" class="btn btn-cancel btn-sm" data-dismiss="modal">
+                    <em class="la la-times-circle"></em>Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modHostList" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-md modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Host List</h5>
+            </div>
+            <div class="modal-body">
+                <div th:replace="custom/status/statusInventoryGroup"></div>
+                <div class="col-md-12">
+                    <div class="row tblImport">
+                        <div class="col-12 col-form-label">
+                            <div>
+                                <table class="table" id="tblIpAddress">
+                                    <caption class="d-none">x</caption>
+                                    <thead>
+                                    <tr>
+                                        <th scope="col" style="width:10%"><input class="caseall" type="checkbox" name="" value=""></th>
+                                        <th scope="col" style="width:90%">Select All</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-add-default btn-sm" id="btnAddSelectedIp">
+                    <em class="la la-floppy-o"></em>Add</button>
+                <button type="button" class="btn btn-cancel btn-sm" id="btnCancelModalGroup">
+                    <em class="la la-times-circle"></em>Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="modImportReport" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Import Report</h5>
+                <h6 class="modal-title ml-auto" id="importReportTotal"></h6>
+            </div>
+            <div class="modal-body">
+                <div th:replace="custom/status/statusInventoryGroup"></div>
+                <div class="col-md-12">
+                     <div class="row tblImport">
+                         <div class="col-12 col-form-label">
+                             <div class="userGroupListingDatatable" id="kt_datatable_report"></div>
+                         </div>
+                     </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary mx-auto" id="btnDismissReport">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modInDeleteConfirmation" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Do you want to Delete ?</p>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-add-default" id="btnYesDelete">
+                <em class="la la-floppy-o"></em>Yes</button>
+                <button type="button" class="btn btn-cancel" data-dismiss="modal">
+                <em class="la la-times-circle"></em>No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="modHostDeleteConfirmation" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+            	<div class="hideclass"><input value="" id="hostDeleteId"></div>
+                <p>Do you want to Delete ?</p>
+            </div>
+            <div class="modal-footer">
+            	<button type="button" class="btn btn-add-default" id="btnYesDeleteHost">
+            		<em class="la la-floppy-o"></em>Yes</button>
+                <button type="button" class="btn btn-cancel" data-dismiss="modal">
+                	<em class="la la-times-circle"></em>No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modGroupDeleteConfirmation" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+            	<div class="hideclass"><input value="" id="groupDeleteId"></div>
+                <p>Do you want to Delete ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-add-default" id="btnYesDeleteGroup">
+            		<em class="la la-floppy-o"></em>Yes</button>
+                <button type="button" class="btn btn-cancel" data-dismiss="modal">
+                	<em class="la la-times-circle"></em>No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modHostCloneConfirmation" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Do you want to make a copy of <span id="selectedHostName"></span> ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <button type="button" class="btn btn-primary" id="btnContinueToClone">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="common/footer"></div>
+
+
+
+

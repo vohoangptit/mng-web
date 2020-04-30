@@ -1,0 +1,161 @@
+<div th:replace="common/header"></div>
+
+<link th:href="@{/css/custom/playbook/playbookapproved-listing.css}"
+      href="../../css/custom/playbook/playbookapproved-listing.css"
+      rel="stylesheet" type="text/css"/>
+<script th:inline="javascript">
+    var hasApproveAndReject = [[${#strings.contains(session.userProfile.permission, 'APPROVE_&_REJECT_PLAYBOOK')}]];
+</script>
+<script th:src="@{/js/custom/playbookapproved-listing.js}"
+        type="text/javascript"></script>
+
+<div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor">
+    <div style="padding: 0% 0% 0% 2%;">
+        <label style="margin:1% 0% 0% 0.5%">
+            <span style="font-weight:600; font-size:20px; color:#333333">Playbook Approval</span>
+            <span style="font-weight:100; font-size:25px; color:#686868;">&nbsp|&nbsp</span>
+        </label>
+        <label style="margin:2% 0% 0% 0.5%">
+            <span> Home</span>
+            <span> &nbsp &gt; &nbsp</span>
+            <span> Master Data</span>
+            <span> &nbsp &gt; &nbsp</span>
+            <span style="color: #e1261c;"> Playbook Approval Listing</span>
+        </label>
+    </div>
+    <!-- begin:: Content -->
+    <div class="kt-content  kt-grid__item kt-grid__item--fluid"
+         id="kt_content">
+
+        <div class="alert alert-light alert-elevate row">
+            <div th:replace="custom/status/status"></div>
+            <div class="col-md-12">
+                <br/>
+                <div class="row search-padd">
+                    <div class="col-md-12 row search-padd">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control search-input border-input"
+                                   placeholder="Filter by Playbook Name, Status, Created Date, ..."
+                                   id="generalSearch"> <span class="search-icon"> <span><em
+                                class="la la-search"></em></span>
+							</span>
+                        </div>
+                        <div class="col-md-2 row">
+                            <div class="col-md-12">
+                                <select class="form-control border-input m-select2 m-input-filter"
+                                        id="createdBySelectd" multiple="multiple">
+                                </select>
+                                <span>
+										<em class="dropdown-icon dropdown-toggle"
+                                            style="position: absolute;left: 85%;top:30%;"></em>
+							  		</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="#" class="btn search-icon-listing btn-add-default"
+                               id="btnSearch"> <em class="la la-search search-icon-right"></em>
+                            </a>&nbsp; <a href="#" class="btn reset-icon-listing btn-default"
+                                          id="btnReset"> <em class="la la-refresh reset-icon-right"></em>
+                        </a>
+                        </div>
+                    </div>
+                    <div class="col-md-12 row">
+                        <div class="col-md-6">
+                            All Playbook with New status that are pending on Approval will be
+                            displayed here</br> Number of records: <span class="numberofrecords"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="line-search"></div>
+                <div class="col-md-12 row">
+                    <div class="col-md-6">
+                        <button style="margin-right:1%"
+                                th:if="${#strings.contains(session.userProfile.permission, 'APPROVE_&_REJECT_PLAYBOOK')}"
+                                type="button" class="btn btn-delete-default btn-icon-sm" id="btnReject">
+                            <em class="la la-minus-circle"></em>
+                            Reject
+                        </button>
+                        <button
+                                th:if="${#strings.contains(session.userProfile.permission, 'APPROVE_&_REJECT_PLAYBOOK')}"
+                                type="button" class="btn btn-approved btn-icon-sm" id="btnApprove">
+                            <em class="la la-check-circle"></em>
+                            Approve
+                        </button>
+                    </div>
+                </div>
+                <br/>
+            </div>
+            <div class="col-md-12">
+                <div class="userGroupListingDatatable" id="kt_datatable"></div>
+                <div>
+                    <table id="header-fixed"
+                           class="table m-table m-table--head-bg-accent">
+                        <caption class="d-none"></caption>
+                        <tr class="d-none">
+                            <th scope="col"></th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- end:: Content -->
+
+    <div class="modal" id="massApproval" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Massively Playbook Approve</h5>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">�</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-12">Selected Playbook</div>
+
+                    <div class="col-md-12">
+
+                        <table class="table" id="tblMassApproval">
+                            <caption class="d-none"></caption>
+                            <thead>
+                            <tr>
+                                <th scope="col" style="width:20%" class="text-center">Playbook Name</th>
+                                <th scope="col" style="width:20%" class="text-center">Created By</th>
+                                <th scope="col" style="width:60%" class="text-center">Remarks</th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+
+                    </div>
+
+                    <div class="col-md-12">
+                        <p id="textApprovedReject">By clicking on Approve button, you
+                            confirm to change status of this selected Playbooks from New to
+                            Approved (ready to be used in the workflow). After approve, these
+                            selected playbooks will not appear in the listing, you can view
+                            these in "Playbook Listing".</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-cancel"
+                            data-dismiss="modal">Cancel
+                    </button>
+                    <button type="button" class="btn btn-add-default"
+                            id="btnContinueApprove">Playbook Approve
+                    </button>
+                    <button type="button" class="btn btn-add-default" id="btnContinueReject">Reject</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div th:replace="common/footer"></div>
+
+
+
+

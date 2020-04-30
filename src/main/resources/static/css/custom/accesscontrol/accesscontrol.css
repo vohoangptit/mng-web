@@ -1,0 +1,106 @@
+.adduser-textright{
+	text-align: right;
+}
+.fullwidth{
+	width: 100%;
+}
+.m-table.m-table--head-bg-accent thead th {
+  background: #ffffff;
+  border-bottom: 0;
+  border-top: 0;
+  text-align: left;
+  color: #747476;
+}
+.m-table.m-table--head-bg-accent thead th:nth-child(n+3) {
+  background: #ffffff;
+  border-bottom: 0;
+  border-top: 0;
+  text-align: center;
+  color:#747474;
+}
+.m-table.m-table--head-bg-accent tbody tr td {
+  padding: 0.75rem;
+  border-top: 1px solid #f4f5f8;
+  text-align: left;
+}
+.m-table.m-table--head-bg-accent tbody tr td:nth-child(2) {
+  /* display: flex; */
+}
+.m-table.m-table--head-bg-accent tbody tr td:nth-child(2) span {
+  flex: 0 0 200px;
+}
+.m-table.m-table--head-bg-accent tbody tr td:nth-child(2) i {
+  text-align: right;
+}
+.m-table.m-table--head-bg-accent tbody tr td:nth-child(n+3) {
+  text-align: left;
+}
+.m-radio,
+.m-checkbox {
+  display: inline-block;
+  position: relative;
+  margin-top: 4%;
+  cursor: pointer;
+  font-size: 1rem;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  -ms-transition: all 0.3s;
+  -o-transition: all 0.3s;
+  transition: all 0.3s;
+  transform: scale(1.2);
+}
+.table th,
+.table td :nth-child(n+3) {
+  padding: 0.75rem;
+  vertical-align: top;
+  border-top: 1px solid #f4f5f8;
+  text-align: center;
+}
+.collapse-button{
+  border: none;
+  background-color: #e1261c;
+  color: white;
+  border-radius:5px;
+}
+.collapse-button:before {
+  font-family: "Font Awesome 5 Free";
+  text-decoration: inherit;
+  text-rendering: optimizeLegibility;
+  text-transform: none;
+  content: "\f067";
+  font-style: inherit;
+  font-weight: bold;
+  
+}
+.collapse-button.collapsed:before {
+  content: "\f068";
+}
+
+.table th:nth-child(1) {
+  width: 50px;
+}
+/* .table th:nth-child(2) {
+  font-weight: 500;
+  width: 300px;
+} */
+.group-name{
+	font-weight:600;
+	color:#393238;
+}
+@media (max-width: 1024px){
+	#header-fixed { 
+	    top: 50px;
+	}
+}
+
+
+.icon-hover{
+	width: 85%;
+	background: #ea6861;
+	text-align: center; 
+	border-radius:5px;
+	margin-bottom: -5%;
+}
+tbody.collapse.collapsed{
+	display: table-row-group;
+}

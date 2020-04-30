@@ -1,0 +1,195 @@
+<div th:replace="common/header"></div>
+<script th:inline="javascript" th:src="@{js/custom/index.js}">
+</script>
+<link th:href="@{/css/custom/user/userProfile.css}"
+      href="../../css/custom/user/userProfile.css" rel="stylesheet"
+      type="text/css"/>
+<script th:inline="javascript">
+    $(document).ready(function () {
+        let check = [[${session.userProfile.permission}]]; //check auto checked checkbox
+        let upload = [[${upload}]];
+        if (upload === "true") {
+            localStorage.setItem("success", "true");
+            if (localStorage.getItem("success") === "true" && localStorage.getItem("submit") === "true") {
+                Swal.fire({
+                    text: "Upload Success",
+                    type: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                localStorage.setItem("submit", "false");
+            }
+        } else if (upload === "false") {
+            localStorage.setItem("failed", "true");
+            if (localStorage.getItem("failed") === "true" && localStorage.getItem("submit") === "true") {
+                Swal.fire({
+                    html: "Size of file must less than 2MB.<br>FileType must be : jpg, jpeg, png",
+                    type: 'error',
+                    timer: 4000,
+                    showConfirmButton: false
+                });
+                localStorage.setItem("submit", "false");
+            }
+        }
+    });
+</script>
+<div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor">
+    <!-- begin:: Content -->
+    <div class="row" style="padding: 0% 0% 0% 2%;">
+        <label style="margin: 1% 0% 0% 0.5%"> <span
+                style="font-weight: 600; font-size: 20px; color: #333333">My
+				Profile</span> <span
+                style="font-weight: 100; font-size: 25px; color: #686868;">&nbsp|&nbsp</span>
+        </label> <label style="margin: 2% 0% 0% 0.5%"> <span> Home</span> <span>
+				<span> &nbsp &gt; &nbsp</span> <span style="color: #e1261c;">
+					My Profile</span></label>
+    </div>
+    <div class="kt-content  kt-grid__item kt-grid__item--fluid"
+         id="kt_content">
+        <div class="profile-info alert alert-light alert-elevate row h-100 p-5"
+             style="background-image: url(../../images/backgrounds/bg-3.jpg);">
+
+            <div class="col-lg-3 col-md-3" style="text-align: -webkit-center;">
+                <div class="text-center">
+					<span class="text-left"> <img alt=""
+                                                  style="width: 80%; height: 10%"
+                                                  th:src="${session.userProfile.imageUrl} != '' ? *{'data:image/png;base64,'+session.userProfile.imageUrl} : @{/images/logos/ava.png}"
+                                                  class="img-responsive img-thumbnail">
+					</span>
+                </div>
+
+                <div style="width: 80%" class="panel">
+                    <form action="uploadImage" th:action="@{/uploadImage}"
+                          id="uploadForm" method="POST" enctype="multipart/form-data">
+                        <table class="table">
+                            <caption class="d-none"></caption>
+                            <tbody>
+                            <tr>
+                                <td class="text-center" style="padding:0.75rem 0rem">
+                                    <input id="upload" name="file" type="file" style="display: none;"
+                                           onchange="changeAvatar()"/>
+                                    <a href="#" id="upload_link" class="btn btn-success btn-block">
+                                         Upload Image</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-center" style="padding:0.75rem 0rem; background: white !important;">
+                                    <a href="#" id="change-password" class="btn btn-success btn-block">
+                                         Change Password</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div th:if="${uploadFileError} == true">
+                            <div class="alert alert-danger" role="alert">ßßß
+                                <span th:utext="#{message.user.profile.upload.error}"></span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-9 col-md-9">
+                <div class="row">
+                    <div class="col-md-2 text-info profile-title">
+                        <em class="fa fa-user"></em> Full Name
+                    </div>
+                    <div class="col-md-5 profile-content">
+                        <div style="padding: 1%" th:text="${session.userProfile.fullName}"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 text-info profile-title">
+                        <em class="fa fa-envelope"></em> Email
+                    </div>
+                    <div class="col-md-5 text-info profile-content">
+                        <a style="padding: 1%"
+                           th:href="'mailto:' + ${session.userProfile.email}"
+                           th:text="${session.userProfile.email}"></a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 text-info profile-title">
+                        <em class="fa fa-phone-square"></em> Mobile No
+                    </div>
+                    <div class="col-md-5 text-info profile-content">
+                        <div style="padding: 1%" th:text="${session.userProfile.mobileNo}">Your
+                            Mobile Number
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 text-info profile-title">
+                        <em class="fa fa-users"></em> User Group
+                    </div>
+                    <div class="col-md-5 text-info profile-content">
+                        <div style="padding: 1%" th:text="${session.userProfile.groups}"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 text-info profile-title">
+                        <em class="fa fa-home"></em> Department
+                    </div>
+                    <div class="col-md-5 text-info profile-content">
+                        <div style="padding: 1%"
+                             th:text="${session.userProfile.department}"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 text-info profile-title">
+                        <em class="fa fa-briefcase"></em> Job Title
+                    </div>
+                    <div class="col-md-5 text-info profile-content">
+                        <div th:text="${session.userProfile.jobTitle}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="change-password d-none h-100" style="background-image: url(../../images/backgrounds/bg-3.jpg);">
+
+            <div class="text-center p-5">
+                <h3>CHANGE PASSWORD</h3>
+            </div>
+            <div class="col-md-10 offset-3">
+                <div class="row">
+                    <div class="col-md-2 text-info change-pw-field">
+                        Old Password
+                    </div>
+                    <div class="col-md-5">
+                        <input id="old-password" type="password" class="form-control search-input border-input" onblur="checkMatchPassword(this)"
+                               placeholder="type your old password"></input>
+                        <div id="wrong-password" class="text-danger font-italic d-none">Hmm, that's not the right password.</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 text-info change-pw-field">
+                        New Password
+                    </div>
+                    <div class="col-md-5 text-info">
+                        <input type="password" id="new-password" class="form-control search-input border-input"
+                               placeholder="type your new password"></input>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 text-info change-pw-field">
+                        Confirmation Password
+                    </div>
+                    <div class="col-md-5 text-info">
+                        <input type="password" class="form-control search-input border-input"
+                               placeholder="retype your new password" onblur="checkConfirmationPassword(this)"></input>
+                        <div id="retype-failed" class="text-danger font-italic d-none">Your password and confirmation password do not match.</div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="text-center p-5">
+                <button class="btn btn-add-default" id="btnChangePassword" disabled>
+                    <em class="la la-floppy-o"></em>Save
+                </button>
+                <button class="btn btn-cancel btn-hover-brand" id="btn-back-profile">
+                    <em class="la la-times-circle"></em>Cancel
+                </button>
+            </div>
+        </div>
+        <!-- end:: Content -->
+    </div>
+    <div th:replace="common/footer"></div>

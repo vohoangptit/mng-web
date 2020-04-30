@@ -1,0 +1,346 @@
+<div th:replace="common/header"></div>
+
+<link th:href="@{/css/custom/playbook/playbook-details.css}"
+	href="../../css/custom/playbook/playbook-details.css" rel="stylesheet"
+	type="text/css" />
+
+<script th:src="@{/js/custom/playbook-details.js}" type="text/javascript"></script>
+<script th:inline="javascript">
+	var hasDeleteNewPermission = [[${#strings.contains(session.userProfile.permission, 'DELETE_PLAYBOOK(NEW_STATUS)')}]];
+	var hasDeletePermission = [[${#strings.contains(session.userProfile.permission, 'DELETE_APPROVED_&_REJECT_PLAYBOOK')}]];
+</script>
+<div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor">
+	<div style="padding: 0% 0% 0% 2%;">
+            <label style="margin:1% 0% 0% 0.5%">
+				<span style="font-weight:600; font-size:20px; color:#333333">Playbook</span>
+				<span style="font-weight:100; font-size:25px; color:#686868;">&nbsp|&nbsp</span>
+			</label>                      
+			<label style="margin:2% 0% 0% 0.5%">
+				<span> Home</span>
+	            <span> &nbsp &gt; &nbsp</span>
+				<span> Master Data</span>
+				<span> &nbsp &gt; &nbsp</span>
+				<span> Playbook Listing</span>
+				<span> &nbsp &gt; &nbsp</span>
+				<span style="color: #e1261c;"> Detail</span>
+			</label>
+	</div>
+	<!-- begin:: Content -->
+	<div class="kt-content  kt-grid__item kt-grid__item--fluid" id="kt_content">
+
+<div class="alert alert-light alert-elevate row fullheight">
+	<div th:replace="custom/status/status"></div>
+    <div class="col-md-12 row">
+        <div class="col-md-8">
+        	<div class="form-group row hideclass displaymessage">
+                <label class="col-3 col-form-label"></label>
+                <div class="col-6">
+                    <div class="alert alert-success" role="alert">
+                        <div class="alert-text hideclass deletemess">Delete successfully</div>
+                        <div class="alert-text hideclass updatemess">Update successfully</div>
+                    </div>
+                </div>
+            </div>
+        
+     	    <div class="form-group row hideclass">
+                <label class="col-3 col-form-label"></label>
+                <div class="col-6">
+                    <input id="getPlaybookid" th:value="${playbookid}">
+                </div>
+            </div>
+        
+            <div class="form-group row">
+                <label class="col-2 col-form-label">Playbook Name<span class="redmarker">*</span></label>
+                <div class="col-10">
+                    <input class="form-control" type="text" value="" id="pldGetPlaybookName">
+                    <div class="hideclass nameRequired"><label class="redmarker">Playbook Name is required</label></div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-2 col-form-label"></label>
+                <div class="col-10 row">
+                	<div class="col-5">
+             		    <button type="button" class="btn btn-secondary btn-hover-brand" onclick="$('#FileUpload').click()">Upload Playbook</button>
+                    	<input id="FileUpload" class="d-none" type='file' accept=".yml" onchange='openFile(event)'>
+                	</div>
+                    
+                    <div class="displayitem col-7 p-2" data-value=""></div>
+                </div>
+            </div>
+            
+            <div class="form-group row hideclass uploadRequired">
+                <label class="col-2 col-form-label"></label>
+                <div class="col-10 row">
+                	<div>
+                		<label class="col-md-12 redmarker">Upload playbook is required and the system only support to upload file with extension: .yml</label>
+                	</div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-2 col-form-label">Playbook Content</label>
+                <div class="col-10">
+                    <textarea class="form-control" readonly="" rows="3" id="getContenOfFile" style="min-height: 200px; background: #f8f8f8"></textarea>
+                </div>
+            </div>
+
+			<div class="form-group row">
+				<label class="col-2 col-form-label">Playbook Input</label>
+				<div class="col-10 row">
+					<div class="col-5">
+						<button type="button" class="btn btn-secondary btn-hover-brand" onclick="$('#massivelyUpload').click()">Add Input Massively</button>
+						<input id="massivelyUpload" class="d-none" type='file' onchange='openFileMassively()'>
+					</div>
+					<div class="displayMassively col-7 p-2" data-value=""></div>
+				</div>
+
+			</div>
+            <div class="form-group row">
+				<label class="col-2 col-form-label"></label>
+                <div class="col-10">
+                    <table class="table" id="tblPlaybookInput" style="border:1px solid #ccc!important; table-layout: fixed;">
+						<caption class="d-none"></caption>
+                        <thead style="background: lightgray">
+                            <tr>
+                                <th scope="col" style="width:20%" class="textcen">Input Type</th>
+                                <th scope="col" lass="textcen">Variable</th>
+                                <th scope="col" style="width:30%" class="textcen">Value</th>
+                                <th scope="col" class="textcen">Mandatory</th>
+                                <th scope="col" class="textcen">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        	<tr class="standard" id = "tblAddInput">
+                        		<td>
+                    			    <select style="width: 90%" class="form-control" id="selectedType" onchange='changeoftype()'>
+		                                <option value="1">Text</option>
+		                                <option value="2">File</option>
+		                            </select>
+                        		</td>
+                        		<td>
+                        			<input class="form-control text-center" type="text" value="" id="pldVariable">
+                        		</td>
+                        		<td>
+                        			<div id="changeofinput"><input class="form-control text-center" type="text" value="" id="pldValue"></div>
+                        			<div class="hideclass" id="changeoftype">
+                     				    <select class="form-control hideclass" id="selectedFile"></select>
+		                            	
+		                            	<select class="form-control" id="selectedFileTest" onchange="changeFunc(value)" style="width: 100%; height:38px;"></select>
+                        			</div>
+                        		</td>
+                        		<td style="vertical-align: middle; text-align: center;">
+                        			<input class="mandatorycheckbox" type="checkbox" id="pldMandatory" checked>
+                        		</td>
+                        		<td style="text-align:center;">
+                        			<span>
+                        				<a href="#" class="btn btn-hover-brand btn-icon btn-pill pldConfirm"><em class="fas fa-plus fa-lg"></em></a>
+                        			</span>
+                        		</td>
+                        	</tr>
+                        </tbody>
+                    </table>
+					<div class="col-md-9 hideclass" id="spErrorInput">
+						<span class="text-danger">* Variable or value cannot empty</span>
+            		</div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-text-input" class="col-2 col-form-label">Playbook Output</label>
+                <div class="col-10">
+                    <label for="example-text-input" class="col-12 col-form-label">
+                        <span class="la la-info-circle"></span>
+                        For playbook output system will auto capture output <span class="textbold">variable - value</span> in Playbook content with systax: <span class="textbold">msg: "variable_name = value"</span>
+                    </label>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-text-input" class="col-2 col-form-label"></label>
+                <div class="col-10">
+
+                    <table class="table hideclass" id="tblPlaybookOutput" style="border:1px solid #ccc!important">
+						<caption class="d-none"></caption>
+                        <thead style="background:#ccc!important">
+                            <tr>
+                                <th scope="col" style="width: 50%" class="text-center">Variable</th>
+                                <th scope="col" style="width: 50%" class="text-center">Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        	<tr class="standard">
+                        	</tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group row hideclass layCreate">
+                <label for="example-text-input" class="col-3 col-form-label">Status</label>
+                <div class="col-9 forstatus" data-value="">
+                    <span class="staNew kt-badge kt-badge--primary kt-badge--rounded statussize hideclass" style="background: #d9a747;">New</span>
+                    <span class="staDra kt-badge kt-badge--warning kt-badge--rounded statussize hideclass">Draft</span>
+                    <span class="staApp kt-badge kt-badge--success kt-badge--rounded statussize hideclass" style="background: #1eb7ae;">Approved</span>
+                    <span class="staRej kt-badge kt-badge--danger kt-badge--rounded statussize hideclass" style="background: #ea6861;">Rejected</span>
+                </div>
+            </div>
+            
+            <div class="form-group row">
+                <label for="example-text-input" class="col-3 col-form-label">Notes</label>
+                <div class="col-9">
+                    <textarea class="form-control" rows="3" id="pldNotes"></textarea>
+                </div>
+            </div>
+            
+            <div class="form-group row hideclass layValiRemark">
+                <label for="example-text-input" class="col-3 col-form-label">Validator Remarks</label>
+                <div class="col-9">
+                    <textarea class="form-control" rows="3" id="pldRemark"></textarea>
+                </div>
+            </div>
+            
+            <div class="form-group row hideclass layCreate">
+                <label for="example-text-input" class="col-3 col-form-label">State</label>
+                <div class="col-9">
+                    <div class="kt-radio-inline">
+						<label class="kt-radio">
+							<input type="radio" name="radio2" value="true" id="radioA"> Active
+							<span></span>
+						</label>
+						<label class="kt-radio">
+							<input type="radio" name="radio2" value="false" id="radioI" checked="checked"> Inactive
+							<span></span>
+						</label>
+					</div>
+                </div>
+            </div>
+			<div class="form-group row ">
+				<div class="col-3">
+					<label>Version Control</label></div>
+				<div class="col-9">
+					<label id="txtVersionPlaybook">Version 1</label>
+				</div>
+			</div>
+        </div>
+    </div>
+    <div class="col-md-12 row">
+        <div class="col-md-7">
+        	<button type="button" class="btn btn-delete-default hideclass" id="btnDeletePlaybook">
+        		<em class="la la-trash"></em>Delete</button>
+        </div>
+        <div class="col-md-5 textright">
+        	<div class="viewNormal">
+        		<button type="button" class="btn btn-add-default" id="btnCreateNewPlaybook">
+        			<em class="la la-floppy-o"></em>
+        			Save</button>
+        		<button th:if="${#strings.contains(session.userProfile.permission, 'SEND_PLAYBOOK_FOR_APPROVAL')}" type="button" class="btn btn-approved" id="btnCreateAndSendToApproved">
+        			<em class="la la-check-circle"></em>
+        			Send for Approval</button>
+				<button th:if="${#strings.contains(session.userProfile.permission, 'VIEW_HISTORY_PLAYBOOK')}" type="button" class="btn btn-info hideclass" id="btnViewHistory">
+					<em class="la la-history"></em>View History</button>
+            	<button type="button" class="btn btn-cancel btn-hover-brand" id="btnBackToPlay">
+            		<em class="la la-times-circle"></em>Cancel</button>
+        	</div>
+        </div>
+    </div>
+</div>
+
+	</div>
+	<!-- end:: Content -->
+
+</div>
+
+<div class="modal" id="addPlaybookConfirmation" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">�</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            	<div th:replace="custom/status/status"></div>
+                <div class="col-md-12">You're processing to create new Playbook with details information as below:</div>
+
+                <div class="col-md-12">
+					<div class="row">
+						<div class="col-3 col-form-label">Playbook Name</div>
+						<div class="col-9 col-form-label" id="reName"></div>
+					</div>
+					<div class="row">
+						<div class="col-3 col-form-label">Playbook Content</div>
+						<div class="col-9 col-form-label" id="reFile"></div>
+					</div>
+					<div class="row" style="height:15em; margin-bottom:15px">
+						<div class="col-12 col-form-label">
+							<textarea class="form-control" rows="3" id="reFileContent" style="height:100%"></textarea>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-2 col-form-label">Playbook Input</div>
+						<div class="col-9 col-form-label">
+							<table class="table" id="tblResultResponse" style="border:1px solid #ccc!important">
+								<caption class="d-none"></caption>
+		                        <thead style="background:#ccc!important">
+		                            <tr>
+		                                <th scope="col" style="width:20%" class="text-center">Input Type</th>
+		                                <th scope="col" style="width:30%" class="text-center">Variable</th>
+		                                <th scope="col" style="width:30%" class="text-center">Value</th>
+		                                <th scope="col" style="width:20%" class="text-center">Mandatory</th>
+		                            </tr>
+		                        </thead>
+		                        <tbody></tbody>
+		                    </table>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-2 col-form-label">Playbook Output</div>
+						<div class="col-9 col-form-label">
+							<table class="table" id="tblResultOuput" style="border:1px solid #ccc!important">
+								<caption class="d-none"></caption>
+		                        <thead style="background:#ccc!important">
+		                            <tr>
+		                                <th scope="col" style="width:50%" class="text-center">Variable</th>
+		                                <th scope="col" style="width:50%" class="text-center">Value</th>
+		                            </tr>
+		                        </thead>
+		                        <tbody></tbody>
+		                    </table>
+						</div>
+					</div>
+                </div>
+                
+                <div class="col-md-12">By clicking on "Create", Playbook will be created in the system and pending for the approval.</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-cancel" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-add-default" id="btnResultResponse">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="kt_modal_Delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	    <div class="modal-dialog" role="document">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
+	                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	                </button>
+	            </div>
+	            <div class="modal-body">
+	                <p>Do you want to Delete ?</p>
+	            </div>
+	            <div class="modal-footer">
+	            	<button type="button" class="btn btn-delete-default" id="btnYesDelete">
+	            		<em class="la la-trash"></em>Yes</button>
+	                <button type="button" class="btn btn-cancel" data-dismiss="modal"><em class="la la-times-circle"></em>No</button></button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+
+<div th:replace="common/footer"></div>
+

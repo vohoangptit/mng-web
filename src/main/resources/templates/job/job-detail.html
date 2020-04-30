@@ -1,0 +1,268 @@
+<div th:replace="common/header"></div>
+
+<link th:href="@{/css/custom/jobmanagement/job-management.css}"
+	href="../../css/custom/jobmanagement/job-management.css" rel="stylesheet"
+	type="text/css" />
+
+<script th:inline="javascript">
+	var hasCreatePermission = [[${#strings.contains(session.userProfile.permission, 'CREATE_JOB')}]];
+	var hasUpdatePermission = [[${#strings.contains(session.userProfile.permission, 'UPDATE_JOB')}]];
+</script>
+
+<script th:src="@{/js/custom/job-detail.js}" type="text/javascript"></script>
+<div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor">
+	<div style="padding: 0% 0% 0% 2%;">
+            <label style="margin:1% 0% 0% 0.5%">
+				<span style="font-weight:600; font-size:20px; color:#333333">Job Management</span>
+				<span style="font-weight:100; font-size:25px; color:#686868;">&nbsp|&nbsp</span>
+			</label>                      
+			<label style="margin:2% 0% 0% 0.5%">
+				<span> Home</span>
+				<span> &nbsp &gt; &nbsp</span>
+				<span> Job Listing</span>
+				<span> &nbsp &gt; &nbsp</span>
+				<span style="color: #e1261c;"> Job Detail</span>
+			</label>
+	</div>
+	<!-- begin:: Content -->
+	<div class="kt-content  kt-grid__item kt-grid__item--fluid" id="kt_content">
+
+		<div class="alert alert-light alert-elevate row">
+			<div class="col-md-12">
+				<br/>
+				<div class="row border-job-information">
+					<label class="text-job-information">Job Information</label>
+					<div class="col-md-12 row form-group" style="margin-top: 20px;">
+						<label class="col-md-2 col-form-label">Job Name <span class="red">*</span></label>
+						<div class="col-md-10">
+							<input type="hidden" th:value="${idJob}" id="idJob"/>
+							<input type="text" id="jobName" style="width: 100%;" class="form-control">
+							<div id="validateJobName" class="red hideclass">The job name is mandatory</div>
+						</div>
+					</div>
+					<div class="col-md-12 row form-group">
+						<label class="col-md-2 col-form-label">Job Description </label>
+						<div class="col-md-10">
+							<textarea class="form-control" id="jobDescription" rows="5"></textarea>
+						</div>
+					</div>
+                    <div class="col-md-12 row form-group">
+                        <label class="col-md-2">Status</label>
+                        <div class="col-md-5">
+                            <div class="kt-radio-inline" style="margin-top: 0;">
+                                <label class="kt-radio">
+                                    <input id="radioA" type="radio" value="true" checked="checked" name="rdStatus">Active
+                                    <span></span>
+                                </label>
+                                <label class="kt-radio">
+                                    <input id="radioI" type="radio" value="false" name="rdStatus">Inactive
+                                    <span></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-5 text-right">
+                            <button type="button" class="btn btn-add-default" id="btnAddJob">
+                                <em class="la la-plus"></em>Save</button>
+							<button type="button" class="btn btn-delete-default hideclass" id="btnDeleteJob">
+								<em class="la la-trash"></em>
+								Delete</button>
+							<button type="button" class="btn btn-cancel" id="btnCancelJob">
+								<em class="la la-times-circle"></em>Cancel</button>
+                        </div>
+                    </div>
+				</div>
+			</div>
+			<div class="col-md-12 inventorybody hideclass" id="tabInventoryWorkflow">
+				<div class="kt-portlet__body">
+					<ul class="nav nav-tabs" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active setNumHost" style="color:#333333" data-toggle="tab" href="#" data-target="#kt_tabs_host">Inventory</a>
+						</li>
+
+						<li class="nav-item">
+							<a class="nav-link setNumGroup" style="color:#333333" data-toggle="tab" href="#" data-target="#kt_tabs_group" id="tab-group">Workflow</a>
+						</li>
+					</ul>
+
+					<div class="tab-content">
+						<div class="tab-pane active" id="kt_tabs_host" role="tabpanel">
+							<div class="col-md-12 row search-padd">
+								<div class="col-md-6">
+									<input type="text" class="form-control search-input border-input" placeholder="Filter by Host Name or Group Name" id="hostSearchKey">
+									<span class="search-icon">
+                                <span><em class="la la-search"></em></span>
+                            </span>
+								</div>
+
+								<div class="col-md-6 text-right">
+									<button type="button" class="btn btn-add-default" id="btnAddHost" th:if="${#strings.contains(session.userProfile.permission, 'CREATE_HOST')}">
+										<em class="la la-plus"></em>
+										Add</button>
+									<button type="button" class="btn btn-delete-default" id="btnDeleteHost" th:if="${#strings.contains(session.userProfile.permission, 'CREATE_HOST')}">
+										<em class="la la-trash"></em>
+										Delete</button>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-6">
+									Total Number of Results found: <span class="totalNum"></span>
+								</div>
+							</div>
+							<div class="col-md-12">
+								<div class="userGroupListingDatatable" id="kt_datatable_host"></div>
+							</div>
+						</div>
+
+						<div class="tab-pane" id="kt_tabs_group" role="tabpanel">
+							<div class="col-md-12 row search-padd">
+								<div class="col-md-6">
+									<select class="browser-default custom-select border-input" id="workflowSelected" style="height: auto;">
+									</select>
+                            </span>
+								</div>
+
+								<div class="col-md-6 col-form-label">
+									<a href="#" id="viewDetailWorkflow">View detail workflow</a>
+								</div>
+							</div>
+
+							<div class="col-md-12">
+								<div class="userGroupListingDatatable" id="kt_datatable_job_input"></div>
+							</div>
+							<div class="col-md-12" style="text-align: right;">
+								<button type="button" class="btn btn-add-default" id="btnAddJobInput">
+									<em class="la la-plus"></em>Save</button>
+								<button type="button" class="btn btn-default" id="btnClearJobInput">
+									<em class="la la-refresh"></em>Clear</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal fade" id="viewDetailImageWorkflow" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+				<div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">View workflow in detail</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body" style="text-align: center;">
+							<span class="contentWorkflowDetail"></span>
+						</div>
+						<div class="modal-footer">
+							<div class="mx-auto">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+								<button type="button" class="btn btn-add-default" id="btnPrintWorkflow">Print</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal fade" id="modalAddJob" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Confirmation</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<p class="contentConfirmJob"></p>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+							<button type="button" class="btn btn-primary" id="btnYesAddJob">Yes</button>
+						</div>
+					</div>
+				</div>
+			</div>
+            <div class="modal" id="modalAddHost" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+                <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Add Host</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">�</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div style="display: none" class="alert alert-success" role="alert" id="success"></div>
+                            <div style="display: none" class="alert alert-danger" role="alert" id="error"></div>
+
+                            <div class="col-md-12 border-job-information" style="border-radius: 10px;">
+								<label class="text-search-criteria">Search Criteria</label>
+                                <div class="row">
+									<div class="col-md-8 col-form-label" style="margin-top: 2px;">
+										<input type="text" class="form-control search-input border-input"
+											   placeholder="Filter by group name or host name" id="generalSearch">
+										<span class="search-icon">
+											<span><em class="la la-search"></em></span>
+										</span>
+									</div>
+                                </div>
+                            </div>
+							<div class="col-md-12">
+								<div class="userGroupListingDatatable" id="kt_datatable_add_Host"></div>
+							</div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-add-default" id="btnHostSave">
+                                <em class="la la-floppy-o"></em>Save</button>
+                            <button type="button" class="btn btn-cancel" id="btnHostCancel">
+                                <em class="la la-times-circle"></em>Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+			<div class="modal fade" id="kt_modal_Delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<div style="display: none;">
+								<input value="" id="deleteId">
+							</div>
+							<p>Do you want to Delete ?</p>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+							<button type="button" class="btn btn-primary" id="btnYesDeleteJob">Yes</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal fade" id="modHostDeleteConfirmation" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							</button>
+						</div>
+						<div class="modal-body">
+							<div class="hideclass"><input value="" id="hostDeleteId"></div>
+							<p>Are you sure you want to remove the selected host(s) out of the job?</p>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-add-default" id="btnYesDeleteHost">
+								<em class="la la-floppy-o"></em>Yes</button>
+							<button type="button" class="btn btn-cancel" data-dismiss="modal">
+								<em class="la la-times-circle"></em>No</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<!-- end:: Content -->
+
+</div>
+
+<div th:replace="common/footer"></div>
+
+
+
+

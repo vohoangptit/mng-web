@@ -1,0 +1,308 @@
+<div th:replace="common/header"></div>
+
+<link th:href="@{/css/custom/filemanagement/filemanagement-listing.css}"
+      href="../../css/custom/filemanagement/filemanagement-listing.css"
+      rel="stylesheet" type="text/css"/>
+<script th:inline="javascript">
+    var hasEditPermission = [[${#strings.contains(session.userProfile.permission, 'UPDATE_FILE')}]];
+    var hasDeletePermission = [[${#strings.contains(session.userProfile.permission, 'DELETE_FILE')}]];
+</script>
+
+<link
+        th:unless="${#strings.contains(session.userProfile.permission, 'VIEW_FILE_LISTING')}"
+        th:href="@{/css/errors/403.css}" href="../../css/errors/403.css"
+        rel="stylesheet" type="text/css"/>
+
+<div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor">
+    <div style="padding: 0% 0% 0% 2%;">
+        <label style="margin:1% 0% 0% 0.5%">
+            <span style="font-weight:600; font-size:20px; color:#333333">File Management</span>
+            <span style="font-weight:100; font-size:25px; color:#686868;">&nbsp|&nbsp</span>
+        </label>
+        <label style="margin:2% 0% 0% 0.5%">
+            <span> Home</span>
+            <span> &nbsp &gt; &nbsp</span>
+            <span> Master Data</span>
+            <span> &nbsp &gt; &nbsp</span>
+            <span style="color: #e1261c;"> File Management Listing</span>
+        </label>
+    </div>
+    <!-- begin:: Content -->
+    <div
+            th:unless="${#strings.contains(session.userProfile.permission, 'VIEW_FILE_LISTING')}">
+        <div th:replace="errors/403.html :: kt_content"></div>
+    </div>
+    <div
+            th:if="${#strings.contains(session.userProfile.permission, 'VIEW_FILE_LISTING')}"
+            class="kt-content  kt-grid__item kt-grid__item--fluid" id="kt_content">
+        <script th:src="@{/js/custom/filemanagement-listing.js}"
+                type="text/javascript"></script>
+        <div class="alert alert-light alert-elevate row">
+            <div class="col-md-12">
+                <div class="row search-padd">
+                    <div id="deleteSuccessAlert" style="display: none"
+                         class="alert alert-success" role="alert">
+                        <span th:utext="#{message.file.delete.success}"></span>
+                    </div>
+                    <div id="updateSuccessAlert" style="display: none"
+                         class="alert alert-success" role="alert">
+                        <span th:utext="#{message.file.update.success}"></span>
+                    </div>
+                </div>
+                <div>
+                    <div id="deleteFailedAlert" style="display: none"
+                         class="alert alert-danger" role="alert">
+                        <span th:utext="#{message.file.delete.failed}"></span>
+                    </div>
+                    <div id="updateFailedAlert" style="display: none"
+                         class="alert alert-danger" role="alert">
+                        <span th:utext="#{message.file.update.failed}"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <!--begin: Search Form -->
+                <div class="row">
+                    <div class="col-md-12 row search-padd">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control search-input border-input"
+                                   placeholder="Filter by File Name, Status" id="generalSearch">
+                            <span class="search-icon"> <span><em
+                                    class="la la-search"></em></span>
+							</span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <a href="javascript:datatable.reload()"
+                               class="btn search-icon-listing btn-add-default">
+                                <em class="la la-search search-icon-right"></em>
+                            </a>&nbsp; <a href="javascript:reset()"
+                                          class="btn btn-default reset-icon-listing">
+                            <em class="la la-refresh reset-icon-right"></em>
+                        </a>
+                        </div>
+                    </div>
+                    <br/>
+                </div>
+                <!--end: Search Form -->
+                <div class="line-search"></div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="col-md-12">
+                            Total Number of Results found: <span class="totalnum"></span>
+                        </div>
+                    </div>
+                    <div
+                            th:if="${#strings.contains(session.userProfile.permission, 'CREATE_FILE')}"
+                            class="col-md-6 text-right">
+                        <a href="/menu/masterdata/file-uploadfile"
+                           class="btn btn-add-default btn-icon-sm"> <span><em
+                                class="la la-plus" style="color: white; font-weight: bolder"></em></span>
+                            <span>Upload File</span>
+                        </a>
+                    </div>
+                </div>
+                <br/>
+            </div>
+            <div class="col-md-12">
+                <div class="userGroupListingDatatable" id="kt_datatable"></div>
+
+                <div>
+                    <table id="header-fixed"
+                           class="table m-table m-table--head-bg-accent">
+                        <caption class="d-none"></caption>
+                        <tr class="d-none">
+                            <th scope="col"></th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- end:: Content -->
+
+    </div>
+    <div class="modal" id="stillActiveFileModal" tabindex="-1"
+         role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Failed</h5>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">�</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div th:utext="#{message.file.cannot.delete}">You cannot
+                        delete active hosting group.
+                    </div>
+                    <div id="clickOnSaveMesg" style="display: none" class="red"
+                         th:utext="#{message.file.click.on.save.first}">Please click
+                        on 'Save' first.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                            data-dismiss="modal" onclick="clearMesg()">
+                        <span>OK</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="confirmDeleteFileModal" tabindex="-1"
+         role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">�</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div th:utext="#{message.file.confirm.delete}">Do you want to
+                        delete this file?
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button onclick="confirmDelete()" type="button" class="btn btn-add-default">
+                        <em class="la la-floppy-o"></em>Yes
+                    </button>
+                    <button type="button" class="btn btn-cancel" data-dismiss="modal">
+                        <em class="la la-times-circle"></em>No
+                    </button>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="editSeclectedRecord" tabindex="-1" role="dialog" data-keyboard="false"
+         data-backdrop="static">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">File Details</h5>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">�</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="form-group row" style="display: none;">
+                        <label for="example-text-input" class="col-2 col-form-label"></label>
+                        <div class="col-10">
+                            <input class="form-control getfileid" type="text" value="">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="example-text-input" class="col-3 col-form-label">Name
+                            <span class="red">*</span>
+                        </label>
+                        <div class="col-9">
+                            <input class="form-control getdataforname" type="text" value="">
+                            <div id="blankNameMesg" style="display: none" class="red"
+                                 th:utext="#{message.file.blank.name}">Name cannot be
+                                blank. Update failed.
+                            </div>
+                            <div id="clickOnSaveMesg" style="display: none" class="red"
+                                 th:utext="#{message.file.click.on.save.first}">Please
+                                click on 'Save' first.
+                            </div>
+                            <div id="incorrectNameMesg" style="display: none" class="red"
+                                 th:utext="#{message.file.duplicate.name}">Duplicate name
+                                found in system. Update failed.
+                            </div>
+                            <div id="duplicateFilenameMesg" style="display: none" class="red"
+                                 th:utext="#{message.file.duplicate.filename}">Duplicate
+                                filename found in system. Update failed.
+                            </div>
+                            <div id="incorrectFileExtMesg" style="display: none" class="red"
+                                 th:utext="#{message.file.incorrect.file.ext}">Incorrect
+                                file extension found. Only support files with extension: .yml,
+                                .txt, .doc, .docx, .pdf. Update failed.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="example-text-input" class="col-3 col-form-label">Description
+                        </label>
+                        <div class="col-9">
+                            <input class="form-control getDescriptionVal" type="text" value="">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-3">
+                            <label for="example-text-input" class="col-form-label">File upload
+                            </label>
+
+                            <input style="display: none;"
+                                   class="form-control getuploadfileid" type="text" value="">
+                        </div>
+                        <div class="col-9 row">
+                            <div class="col-5">
+                                <label for="FileUpload1"
+                                       class="btn btn-accent btn-upload-container"
+                                       style="border-radius: 30px; border: solid 0.5px #1565c0; background-color: white; color: #1565c0 !important;">
+                                    Upload File </label> <input id="FileUpload1" style="display: none;"
+                                                                type='file' onchange='openFile(event)'>
+                            </div>
+
+                            <div class="col-6" style="top: 25%;right:8%">
+                                <div class="displayitems"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="example-text-input" class="col-3 col-form-label">Status</label>
+                        <div class="col-8">
+                            <div class="kt-radio-inline">
+                                <div>
+                                    <label class="kt-radio" style="margin-right:15%"> <input
+                                            class="radioA radioname" type="radio" name="status"
+                                            value="Y">Active<span></span>
+                                    </label>
+                                    <label class="kt-radio"> <input
+                                            class="radioI radioname" type="radio" name="status"
+                                            value="N">Inactive<span></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label">Version Control
+                        </label>
+                        <div class="col-9" style="margin-top: 4px">
+                            <div class="version"></div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="editedFileId"/>
+                </div>
+                <div class="modal-footer col-md-12">
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-delete-default"
+                                data-dismiss="modal" onclick="checkDeleteGetId()">Delete
+                        </button>
+                    </div>
+                    <div class="col-md-10" style="text-align: right;">
+                        <button type="button" class="btn btn-add-default"
+                                onclick="saveFileDetail()"><em class="la la-floppy-o"></em>Save
+                        </button>
+                        <button th:if="${#strings.contains(session.userProfile.permission, 'VIEW_HISTORY_FILE')}"
+                                type="button" class="btn btn-info"
+                                onclick="redirectHistoryView()"><em class="la la-history"></em>View History
+                        </button>
+                        <button type="button" class="btn btn-cancel"
+                                data-dismiss="modal" onclick="clearMesg()"><em class="la la-times-circle"></em>Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="common/footer"></div>

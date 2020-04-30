@@ -1,0 +1,37 @@
+.search-padd{
+	padding-bottom: 2%;
+}
+
+.search-input{
+	padding-left: 8%;
+}
+
+.search-icon{
+    position: absolute;
+    top: 25%;
+    left: 5%;
+}
+
+.redmarker{
+	color: red;
+}
+
+.textright{
+	text-align: right;
+}
+
+.textbold{
+	font-weight: bold;
+}
+
+.hideclass{
+	display: none;
+}
+
+.textcen{
+	text-align: center;
+}
+.filtercreatedby{
+    margin: 10px -10px 0px 0px;
+    font-family: "Poppins";
+}

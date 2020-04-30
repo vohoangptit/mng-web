@@ -1,0 +1,101 @@
+<div th:replace="common/header"></div>
+
+<link th:href="@{/css/custom/myjobapprovalrequest/my-job-approval-request.css}"
+      href="../../css/custom/myjobapprovalrequest/my-job-approval-request.css" rel="stylesheet"
+      type="text/css"/>
+
+<script th:inline="javascript">
+    var hasViewPermission = [[${#strings.contains(session.userProfile.permission, 'VIEW_MY_APPROVAL_REQUEST')}]];
+    var hasApproveAndRejectPermission = [[${#strings.contains(session.userProfile.permission, 'APPROVE_&_REJECT_JOB_EXECUTION')}]];
+</script>
+
+<script th:src="@{/js/custom/approval-request-listing.js}" type="text/javascript"></script>
+
+<div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor">
+    <div style="padding: 0% 0% 0% 2%;">
+        <label style="margin:1% 0% 0% 0.5%">
+            <span style="font-weight:600; font-size:20px; color:#333333">My Approval Request</span>
+        </label>
+        <label style="margin:2% 0% 0% 0.5%">
+            <span> &nbsp &gt; &nbsp</span>
+            <span style="color: #e1261c;"> Job Execution Waiting for Approval List</span>
+        </label>
+    </div>
+    <!-- begin:: Content -->
+    <div class="kt-content  kt-grid__item kt-grid__item--fluid"
+         id="kt_content">
+
+        <div class="alert alert-light alert-elevate row">
+            <div class="col-md-12">
+                <br/>
+                <div class="row search-padd">
+                    <div class="col-md-12 row search-padd">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control search-input border-input"
+                                   placeholder="Filter by Job name, Assignee Name" id="generalSearch">
+                            <span class="search-icon"> <span><em
+                                    class="la la-search"></em></span>
+							</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="line-search"></div>
+                <div class="row">
+                    <div class="col-md-6">
+                        Total Number of Results found: <span class="totalNum"></span>
+                    </div>
+                </div>
+                <br/>
+            </div>
+
+            <div class="col-md-12">
+                <div class="userGroupListingDatatable" id="kt_datatable"></div>
+
+                <div>
+                    <table id="header-fixed"
+                           class="table m-table m-table--head-bg-accent">
+                        <caption class="d-none"></caption>
+                        <tr class="d-none">
+                            <th scope="col"></th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="modal fade" id="kt_modal" tabindex="-1"
+                 role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Comfirmation</h5>
+                            <button type="button" class="close" data-dismiss="modal"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="confirm-message">Do you want to Reject the job ?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary"
+                                    data-dismiss="modal">No
+                            </button>
+                            <button type="button" class="btn btn-primary" id="btnYes">Yes</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" id="job-approval-id">
+            <input type="hidden" id="action-type">
+
+        </div>
+
+    </div>
+    <!-- end:: Content -->
+
+</div>
+
+<div th:replace="common/footer"></div>
+
+
+
+

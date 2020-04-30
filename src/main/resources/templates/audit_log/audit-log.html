@@ -1,0 +1,143 @@
+'
+<div th:replace="common/header"></div>
+<link
+	th:unless="${#strings.contains(session.userProfile.permission, 'VIEW_AUDIT_LOG')}"
+	th:href="@{/css/errors/403.css}" href="../../css/errors/403.css"
+	rel="stylesheet" type="text/css" />
+
+
+<div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor">
+	<div style="padding: 0% 0% 0% 2%;">
+            <label style="margin:1% 0% 0% 0.5%">
+				<span style="font-weight:600; font-size:20px; color:#333333">Audit Log</span>
+				<span style="font-weight:100; font-size:25px; color:#686868;">&nbsp|&nbsp</span>
+			</label>                      
+			<label style="margin:2% 0% 0% 0.5%">
+				<span> Home</span>
+	            <span> &nbsp &gt; &nbsp</span>
+				<span> System</span>
+				<span> &nbsp &gt; &nbsp</span>
+				<span style="color: #e1261c;"> Audit Log</span>
+			</label>
+	</div>
+	<!-- begin:: Content -->
+	<div
+		th:unless="${#strings.contains(session.userProfile.permission, 'VIEW_AUDIT_LOG')}">
+		<div th:replace="errors/403.html :: kt_content"></div>
+	</div>
+
+	<div
+		th:if="${#strings.contains(session.userProfile.permission, 'VIEW_AUDIT_LOG')}"
+		class="kt-content  kt-grid__item kt-grid__item--fluid" id="kt_content">
+		<div class="alert alert-light alert-elevate row">
+			<div class="col-md-12">
+				<!--begin: Search Form -->
+				<br/>
+				<div class="row search-padd">
+					<div class="col-md-4">
+						<input type="text" class="form-control search-input border-input"
+							style="padding-left: 8%"
+							placeholder="Filter by User, User Group, description"
+							id="generalSearch"> <span class="search-icon"> <span><em
+								class="la la-search"></em></span>
+						</span>
+					</div>
+					<div class="col-md-3">
+						<div class="input-group date">
+							<input placeholder="From (Last login date)" type="text"
+								class="form-control dt" name="fromActionDate" value=""
+								id="kt_datepicker_3"> <span> <em
+								class="la la-calendar"></em>
+							</span>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="input-group date">
+							<input placeholder="To (Last login date)" type="text"
+								class="form-control dt" name="toActionDate" value=""
+								id="kt_datepicker_3"> <span> <em
+								class="la la-calendar"></em>
+							</span>
+						</div>
+						<div id="dateRangeError" class="red" style="display: none"
+							th:utext="#{message.user.date.range.error}">To date must be
+							later than from date.</div>
+					</div>
+					<div class="col-md-2">
+						<a href="javascript:doSearch()"
+							class="btn search-icon-listing btn-add-default"> <em
+							class="la la-search search-icon-right"></em>
+						</a>&nbsp; <a href="javascript:reset()"
+							class="btn reset-icon-listing btn-default"> <em
+							class="la la-refresh reset-icon-right"></em>
+						</a>
+					</div>
+				</div>
+				<div class="line-search" style="margin-top: 2%"></div>
+				<div class="col-md-12 row">
+					<a
+						th:if="${#strings.contains(session.userProfile.permission, 'EXPORT_AUDIT_LOG')}"
+						href="#" id="audit-export-csv" class="btn btn-default btn-icon-sm">
+						<span>
+						<em class="la la-download"></em>
+						Export CSV</span>
+					</a>
+				</div>
+				<!--end: Search Form -->
+				<br />
+			</div>
+			<div class="col-md-12">
+				<div class="userListingDatatable" id="kt_datatable"></div>
+
+				<div>
+					<table id="header-fixed"
+						class="table m-table m-table--head-bg-accent">
+						<caption class="d-none"></caption>
+						<tr class="d-none">
+							<th scope="col"></th>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+		<!-- end:: Content -->
+	</div>
+</div>
+
+<div th:replace="common/footer"></div>
+<script th:src="@{/js/custom/audit-log.js}" type="text/javascript"></script>
+<script th:src="@{/js/bootstrap/bootstrap-datepicker.js}"></script>
+<script th:src="@{/js/custom/moment.js}"></script>
+<script>
+	$(document).ready(
+			function() {
+				var date = new Date();
+				/* previous date 15 days */
+				$('input[name="toActionDate"]').val(
+						addprefixfordate(date.getDate()) + '/'
+								+ addprefixfordate(date.getMonth() + 1) + '/'
+								+ date.getFullYear());
+				var predate = new Date();
+				var previousdate = predate.getDate() - 15;
+				predate.setDate(previousdate);
+				$('input[name="fromActionDate"]').val(
+						addprefixfordate(predate.getDate()) + '/'
+								+ addprefixfordate(predate.getMonth() + 1)
+								+ '/' + predate.getFullYear());
+				doSearch();
+
+			});
+	function addprefixfordate(input) {
+		var str = ""
+		if (parseInt(input) < 10) {
+			str = '0' + input;
+		} else {
+			str = input;
+		}
+		return str;
+	}
+</script>
+t
+<link th:href="@{/css/custom/audit/audit.css}"
+	href="../../css/custom/audit/audit.css" rel="stylesheet"
+	type="text/css" />

@@ -1,0 +1,51 @@
+.redmarker{
+	color: red;
+}
+
+.textright{
+	text-align: right;
+}
+
+.hideclass{
+	display: none;
+}
+
+.textcen{
+	text-align: center;
+}
+
+.ip-drop-width{
+	width: 100%;
+}
+
+.search-icon{
+    position: absolute;
+    top: 25%;
+    left: 5%;
+}
+
+.search-input{
+	padding-left: 8%;
+}
+
+.table td {
+    padding: 0.75rem;
+    vertical-align: baseline;
+    border-top: 1px solid #ebedf2;
+}
+
+#header-fixed {
+    position: fixed;
+    top: 65px; display:none;
+    background-color: white;
+    height: 45px !important;
+    width: 72%;
+}
+
+#header-group-fixed {
+    position: fixed;
+    top: 65px; display:none;
+    background-color: white;
+    height: 45px !important;
+    width: 72%;
+}

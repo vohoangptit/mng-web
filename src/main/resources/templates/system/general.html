@@ -1,0 +1,317 @@
+<div th:replace="common/header"></div>
+<link th:href="@{/css/custom/setting/email-template.css}"
+	href="../../css/custom/setting/email-template.css" rel="stylesheet"
+	type="text/css" />
+<script th:inline="javascript">
+	var hasEditPermission = [[${#strings.contains(session.userProfile.permission, 'UPDATE_MAIL_TEMPLATE')}]];
+</script>
+	
+<div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor">
+	<div style="padding: 0% 0% 0% 2%;">
+            <label style="margin:1% 0% 0% 0.5%">
+				<span style="font-weight:600; font-size:20px; color:#333333">Setting</span>
+				<span style="font-weight:100; font-size:25px; color:#686868;">&nbsp|&nbsp</span>
+			</label>                      
+			<label style="margin:2% 0% 0% 0.5%">
+				<span> Home</span>
+	            <span> &nbsp &gt; &nbsp</span>
+				<span> System</span>
+				<span> &nbsp &gt; &nbsp</span>
+				<span style="color: #e1261c;"> Setting</span>
+			</label>
+	</div>
+	<!-- begin:: Content -->
+	<div class="kt-content  kt-grid__item kt-grid__item--fluid"
+		id="kt_content">
+		<!--begin::Portlet-->
+		<div class="kt-portlet kt-portlet--tabs">
+			<div class="kt-portlet__head">
+				<div class="kt-portlet__head-toolbar">
+					<ul
+						class="nav nav-tabs nav-tabs-line nav-tabs-line-success nav-tabs-line-2x"
+						role="tablist">
+						<li class="nav-item"><a class="nav-link active"
+							data-toggle="tab" href="#kt_system_general" role="tab"> <em
+								class="la la-cog"></em> General
+						</a></li>
+						<li th:if="${#strings.contains(session.userProfile.permission, 'VIEW_MAIL_TEMPLATE_LISTING')}" class="nav-item"><a onclick="return loadEmailTemplate();"
+							class="nav-link" data-toggle="tab"
+							href="#kt_portlet_base_demo_1_2_tab_content" role="tab"> <em
+								class="la la-briefcase"></em> Email Templates
+						</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="kt-portlet__body">
+				<div class="tab-content">
+					<div class="tab-pane active" id="kt_system_general" role="tabpanel">
+						<!--begin::Form-->
+						<form class="kt-form kt-form--label-right"
+							id="system-configureation-form">
+							<div th:replace="custom/status/status"></div>
+							<div class="kt-portlet__body">
+								<h5 class="kt-portlet__head-title">SMTP Configuration</h5>
+								<div class="form-group row">
+									<label class="col-lg-2 col-form-label">From Email *</label>
+									<div class="col-lg-3">
+										<input
+											th:if="${#strings.contains(session.userProfile.permission, 'UPDATE_GENERAL_SETTING')}"
+											type="email" th:value="${systemSetting.email}"
+											class="form-control" name="email"
+											placeholder="Your Email Configuration"> <input
+											th:unless="${#strings.contains(session.userProfile.permission, 'UPDATE_GENERAL_SETTING')}"
+											disabled="disabled" type="email"
+											th:value="${systemSetting.email}" class="form-control"
+											name="email">
+
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-lg-2 col-form-label">SMTP Host *</label>
+									<div class="col-lg-3">
+										<input type="text"
+											th:if="${#strings.contains(session.userProfile.permission, 'UPDATE_GENERAL_SETTING')}"
+											th:value="${systemSetting.smtpHost}" class="form-control"
+											name="smtpHost" placeholder="Your SMTP Host"> <input
+											type="text"
+											th:unless="${#strings.contains(session.userProfile.permission, 'UPDATE_GENERAL_SETTING')}"
+											disabled="disabled" th:value="${systemSetting.smtpHost}"
+											class="form-control" name="smtpHost">
+
+									</div>
+									<label class="col-lg-2 col-form-label">SMTP Port *</label>
+									<div class="col-lg-3">
+										<input type="number"
+											th:if="${#strings.contains(session.userProfile.permission, 'UPDATE_GENERAL_SETTING')}"
+											th:value="${systemSetting.smtpPort}" maxlength="10"
+											class="form-control" placeholder="Your SMTP Port"
+											name="smtpPort"> <input type="number"
+											th:unless="${#strings.contains(session.userProfile.permission, 'UPDATE_GENERAL_SETTING')}"
+											disabled="disabled" th:value="${systemSetting.smtpPort}"
+											maxlength="10" class="form-control"
+											placeholder="Your SMTP Port" name="smtpPort">
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-lg-2 col-form-label">SMTP Security</label>
+									<div class="col-lg-3">
+										<select
+											th:disabled="${!#strings.contains(session.userProfile.permission, 'UPDATE_GENERAL_SETTING')}"
+											class="form-control m-select2" id="kt_select2_10"
+											name="sbSmtpSecurity" style="height: auto;">
+											<option th:value="false">None</option>
+											<option th:value="true"
+												th:selected="${systemSetting.sbSmtpSecurity}">Yes</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-lg-2 col-form-label">Need
+										Authentication</label>
+									<div class="col-lg-3">
+										<label class="kt-checkbox" style="top: 5px;"> <input
+											type="checkbox" th:checked="${systemSetting.username != ''}"
+											id="isAuthentication"> <span></span>
+										</label>
+									</div>
+								</div>
+								<div class="form-group row" id="authentication-info"
+									th:style="${systemSetting.username != ''} ? 'display:flex' : 'display:none'">
+									<label class="col-lg-2 col-form-label">SMTP Username:</label>
+									<div class="col-lg-3 col-lg-pull-9">
+										<input
+											th:if="${#strings.contains(session.userProfile.permission, 'UPDATE_GENERAL_SETTING')}"
+											type="text" th:value="${systemSetting.username}"
+											class="form-control" placeholder="SMTP Username"
+											id="username" name="username"> <input
+											th:unless="${#strings.contains(session.userProfile.permission, 'UPDATE_GENERAL_SETTING')}"
+											disabled="disabled" type="text"
+											th:value="${systemSetting.username}" class="form-control"
+											placeholder="SMTP Username" id="username" name="username">
+									</div>
+									<label class="col-lg-2 col-form-label">SMTP Password:</label>
+									<div class="col-lg-3">
+										<input
+											th:if="${#strings.contains(session.userProfile.permission, 'UPDATE_GENERAL_SETTING')}"
+											type="password" th:value="${systemSetting.password}"
+											class="form-control" placeholder="SMTP Password"
+											id="password" name="password"> <input
+											th:unless="${#strings.contains(session.userProfile.permission, 'UPDATE_GENERAL_SETTING')}"
+											disabled="disabled" type="password"
+											th:value="${systemSetting.password}" class="form-control"
+											placeholder="SMTP Password" id="password" name="password">
+									</div>
+								</div>
+
+								<div class="form-group row">
+									<div class="kt-input-icon">
+										<button type="button" id="send-test-email"
+											class="btn btn-success col-lg-2 col-form-label">Send
+											Test Email</button>
+									</div>
+								</div>
+							</div>
+							<div class="kt-portlet__body" style="border-top: 1px solid #ebedf2;">
+								<h5 class="kt-portlet__head-title">Job Planning Configuration</h5>
+								<div class="form-group row">
+									<label class="col-lg-3 col-form-label">Auto Reject Job After *</label>
+									<div class="col-lg-3">
+										<input type="number" th:value="${systemSetting.jobPlanningConfig}" required maxlength="2" min="0" max="24" class="form-control" placeholder="Time auto reject job" name="jobPlanningConfig">
+									</div>
+									<label class="col-lg-1 col-form-label" style="text-align: left;">(hours)</label>
+								</div>
+							</div>
+							<div class="kt-portlet__foot kt-portlet__foot--fit-x">
+								<div class="kt-form__actions">
+									<div class="row">
+										<div class="col-lg-9"></div>
+										<div class="col-lg-3"
+											th:if="${#strings.contains(session.userProfile.permission, 'UPDATE_GENERAL_SETTING')}">
+											<button type="reset" class="btn btn-add-default"
+												id="system-general-save">Save</button>
+											<button type="reset" class="btn btn-cancel">Cancel</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</form>
+
+						<!--end::Form-->
+					</div>
+
+
+					<div class="tab-pane" id="kt_portlet_base_demo_1_2_tab_content"
+						role="tabpanel">
+						<div id="listingEmailTab">
+							<div class="col-md-12 row">
+								<div class="col-md-5">
+									<input type="text" class="form-control search-placeholder"
+										placeholder="Filter by Template Name, Status"
+										id="emailKeySearch"> <span class="search-icon">
+										<span><em class="la la-search"></em></span>
+									</span>
+								</div>
+
+								<div class="col-md-7">
+									<a href="javascript:datatable.reload()"
+										class="btn search-icon-listing btn-add-default">
+										 <em class="la la-search search-icon-right"></em>
+									</a>&nbsp; <a href="javascript:reset()"
+										class="btn reset-icon-listing btn-default">
+										<em class="la la-refresh reset-icon-right"></em>
+									</a>
+								</div>
+								<!--end: Search Form -->
+								<br />
+							</div>
+							<div class="col-md-12">
+								<table class="table" id="tblListing">
+									<caption class="d-none"></caption>
+									<thead class="table-listing">
+										<tr>
+											<th scope="col" style="width:20%">S/N</th>
+											<th scope="col" style="width:40%">Template Name</th>
+											<th scope="col" style="width:20%">Status</th>
+											<th scope="col" style="width:20%">Action</th>
+										</tr>
+									</thead>
+									<tbody></tbody>
+								</table>
+							</div>
+						</div>
+						<div id="detailEmailTab" class="hideclass">
+							<div class="form-group row">
+								<label class="col-2 col-form-label">Template Name<span
+									class="redmarker">*</span>
+								</label>
+								<div class="col-6">
+									<input class="form-control" type="text" value=""
+										id="pldEmailTemplateName" onkeydown="hideError();" onblur="checkExistingTemplateName(this);checkNameEmpty(this);">
+									<span id="emptyNameError" th:utext="#{message.template.empty}" class="hiddenred"></span>
+									<span id="existNameError" th:utext="#{message.template.name.exist}" class="hiddenred"></span>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-2 col-form-label">Email Subject<span
+									class="redmarker">*</span>
+								</label>
+								<div class="col-6">
+									<input class="form-control" type="text" value="" id="pldEmailSubject"
+									onkeydown="hideSubjectError();" onblur="checkSubjectEmpty(this);"> 
+									<span id="emptySubjectError" th:utext="#{message.template.empty}" class="hiddenred"></span>
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-2 col-form-label">Support Variable</label>
+								<div class="col-6">
+									<table class="table" id="tblEmailVariable"
+										style="border: 1px solid #ccc !important; text-align: center">
+										<caption class="d-none"></caption>
+										<thead style="background: whitesmoke">
+											<tr>
+												<th scope="col" style="width: 40%" class="textcen">Variable Name</th>
+												<th scope="col" style="width: 60%" class="textcen">Description</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr class="standard">
+											</tr>
+										</tbody>
+									</table>
+
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-2 col-form-label">Template Content<span
+									class="redmarker">*</span></label>
+								<div class="col-6">
+									<textarea name="contentEmail" id="txtContent"
+										style="width: 100%"></textarea>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-9 col-form-label"><span
+									class="redmarker">*</span> </label>
+								<div class="col-md-3 textright">
+									<div class="viewNormal">
+										<button type="button" class="btn btn-add-default" id="btnUpdateEmailTemplate">Save</button>
+										<button type="button" class="btn btn-cancel btn-hover-brand" id="btnBackListingEmail">Cancel</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!--end::Portlet-->
+	</div>
+	<!-- end:: Content -->
+</div>
+<script>
+	CKEDITOR.replace('contentEmail');
+	CKEDITOR.config.allowedContent = true;
+/* 	CKEDITOR.config.toolbar = [
+		   ['Styles','Format','Font','FontSize'],
+		   '/',
+		   ['Bold','Italic','Underline','StrikeThrough','-','Undo','Redo','-','Cut','Copy','Paste','Find','Replace','-','Outdent','Indent','-','Print'],
+		   '/',
+		   ['NumberedList','BulletedList','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
+		   ['Image','Table','-','Link','Flash','Smiley','TextColor','BGColor','Source']
+		] ;  */
+		
+
+		// Toolbar groups configuration.
+		
+</script>
+<div th:replace="common/footer"></div>
+<!--begin::Page Scripts(used by this page) -->
+<script th:src="@{/js/custom/system-general.js}"
+	src="../../js/custom/system-general.js" type="text/javascript"></script>
+<script th:src="@{/js/custom/setting/email-template.js}"
+	src="../../js/custom/setting/email-template.js" type="text/javascript"></script>
+<!--end::Page Scripts(used by this page) -->
+

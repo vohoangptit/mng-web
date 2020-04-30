@@ -1,0 +1,23 @@
+.search-padd{
+	padding-bottom: 2%;
+}
+
+.search-input{
+	padding-left: 8%;
+}
+
+.red {
+	color:red !important;
+}
+
+.hideclass{
+	display: none;
+}
+.filtercreatedby{
+    margin: 10px -10px 0px 0px;
+    font-weight: 500;
+}
+.filterapprovedby{
+    margin: 10px 0px 0px 0px;
+    font-weight: 500;
+}

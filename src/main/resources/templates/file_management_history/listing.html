@@ -1,0 +1,148 @@
+<div th:replace="common/header"></div>
+
+<link th:href="@{/css/custom/file_management_history/listing.css}"
+	  href="../../css/custom/file_management_history/listing.css"
+	  rel="stylesheet" type="text/css" />
+<script th:inline="javascript">
+	// var hasViewDetailPermission = [[${#strings.contains(session.userProfile.permission, 'UPDATE_FILE')}]];
+	var hasRestorePermission = [[${#strings.contains(session.userProfile.permission, 'RESTORE_HISTORICAL_FILE')}]];
+</script>
+
+<script th:src="@{/js/custom/file-management-history.js}" type="text/javascript"></script>
+
+
+<div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor">
+	<div style="padding: 0% 0% 0% 2%;">
+		<label style="margin:1% 0% 0% 0.5%">
+			<span style="font-weight:600; font-size:20px; color:#333333">File Management</span>
+			<span style="font-weight:100; font-size:25px; color:#686868;">&nbsp|&nbsp</span>
+		</label>
+		<label style="margin:2% 0% 0% 0.5%">
+			<span> Home</span>
+			<span> &nbsp &gt; &nbsp</span>
+			<span> Master Data</span>
+			<span> &nbsp &gt; &nbsp</span>
+			<span style="color: #e1261c;"> History</span>
+		</label>
+	</div>
+	<!-- begin:: Content -->
+	<div class="kt-content  kt-grid__item kt-grid__item--fluid" id="kt_content">
+
+		<div class="alert alert-light alert-elevate row">
+			<div class="col-md-12">
+				<br/>
+				<div class="row border-file-information">
+					<label class="text-file-information">Current Version Information</label>
+					<div class="col-md-12 row form-group" style="margin-top: 20px;">
+						<div class="col-md-6">
+							Name: <label id="txtFileName"></label>
+						</div>
+						<div class="col-md-6">
+							File: <a class="download-file" href="#" id="txtFile"></a>
+							<a><em class="download-file la la-download icon-download"></em></a>
+						</div>
+					</div>
+					<div class="col-md-12 row form-group">
+						<div class="col-md-6">
+							Version <label id="txtVersion"></label>
+						</div>
+						<div class="col-md-6">
+							Updated by <label id="txtUpdateBy"></label> at <label id="txtUpdateAt"></label>
+						</div>
+					</div>
+				</div>
+				<input th:value="${fileId}" type="hidden" id="fileId"/>
+			</div>
+			<div class="col-md-12 text-right">
+				<button type="button" class="btn btn-add-default" id="btnBackToCurrentVersion">
+					<em class="la la-arrow-left"></em>Back to current version</button>
+			</div>
+			<div class="col-md-12">
+				<div id="kt_datatable"></div>
+
+				<div>
+					<table id="header-fixed"
+						   class="table m-table m-table--head-bg-accent">
+						<caption class="d-none"></caption>
+						<tr class="d-none">
+							<th scope="col"></th>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<!-- end:: Content -->
+
+	<div class="modal" id="viewDetailModal" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">File Details</h5>
+					<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+						<span aria-hidden="true">�</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<input class="fileHistoryId" type="hidden">
+					<div class="form-group row">
+						<label class="col-3 col-form-label">Name
+						</label>
+						<div class="col-9">
+							<input class="form-control txtName" type="text" readonly >
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-3 col-form-label">Description
+						</label>
+						<div class="col-9">
+							<input class="form-control txtDesc" type="text" readonly>
+						</div>
+					</div>
+					<div class="form-group row">
+						<div class="col-3">
+							<label class="col-form-label">File
+							</label>
+						</div>
+						<div class="col-9" style="margin-top: 5px">
+							<a  class="txtFileNameHistory download-file-history" href="#"></a>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-3 col-form-label">Status</label>
+						<div class="col-8">
+							<div class="kt-radio-inline">
+								<div>
+									<label class="kt-radio" style="margin-right:15%"> <input disabled="true"
+																							 class="radioA radioname" type="radio" name="status" value="Y">Active<span></span>
+									</label>
+									<label class="kt-radio" > <input disabled="true"
+																	 class="radioI radioname" type="radio" name="status" value="N">Inactive<span></span>
+									</label>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-3 col-form-label">Version Control
+						</label>
+						<div class="col-9" style="margin-top: 4px">
+							<div class="txtVersion"></div>
+						</div>
+					</div>
+					<input type="hidden" id="fileManagementId" />
+				</div>
+				<div class="modal-footer col-md-12">
+					<button type="button" class="btn btn-cancel"
+							data-dismiss="modal"><em class="la la-times-circle"></em>Cancel</button>
+					<button th:if="${#strings.contains(session.userProfile.permission, 'RESTORE_HISTORICAL_FILE')}" type="button" class="btn btn-add-default btn-restore">
+						<em class="la la-history"></em>Restore</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div th:replace="common/footer"></div>

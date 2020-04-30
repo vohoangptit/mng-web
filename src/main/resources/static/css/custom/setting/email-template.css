@@ -1,0 +1,21 @@
+.search-icon{
+	position: absolute;
+    top: 25%;
+    left: 5%;
+}
+.search-placeholder{
+	padding-left:8%;
+}
+.table-listing{
+	color:#646C9A;
+}
+.table{
+	margin-top: 3%;
+}
+.hideclass{
+	display: none;
+}
+.hiddenred {
+	color: red;
+	display:none;
+}

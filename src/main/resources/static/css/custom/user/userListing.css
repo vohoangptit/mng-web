@@ -1,0 +1,26 @@
+.search-padd{
+	padding-bottom: 2%;
+}
+
+.search-input{
+	padding-left: 8%;
+}
+
+.search-icon{
+    position: absolute;
+    top: 25%;
+    left: 5%;
+}
+
+.red {
+	color:red !important;
+}
+
+.btn-secondary {
+	color: #a7abc3;
+}
+
+.form-check {
+	padding-left: 2.25rem;
+	color: #A7ABC3;
+}

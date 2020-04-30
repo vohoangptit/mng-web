@@ -1,0 +1,195 @@
+<div th:replace="common/header"></div>
+
+<link th:href="@{/css/custom/playbook/playbookapproved-details.css}"
+	href="../../css/custom/playbook/playbookapproved-details.css" rel="stylesheet"
+	type="text/css" />
+
+<script th:src="@{/js/custom/playbookapproved-details.js}" type="text/javascript"></script>
+
+<div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor">
+	<div style="padding: 0% 0% 0% 2%;">
+            <label style="margin:1% 0% 0% 0.5%">
+				<span style="font-weight:600; font-size:20px; color:#333333">Playbook Approved</span>
+				<span style="font-weight:100; font-size:25px; color:#686868;">&nbsp|&nbsp</span>
+			</label>                      
+			<label style="margin:2% 0% 0% 0.5%">
+				<span> Home</span>
+	            <span> &nbsp &gt; &nbsp</span>
+				<span> Master Data</span>
+				<span> &nbsp &gt; &nbsp</span>
+				<span> Playbook Approved Listing</span>
+				<span> &nbsp &gt; &nbsp</span>
+				<span style="color: #e1261c;"> Detail</span>
+			</label>
+	</div>
+	<!-- begin:: Content -->
+	<div class="kt-content  kt-grid__item kt-grid__item--fluid" id="kt_content">
+
+<div class="alert alert-light alert-elevate row">
+    <div th:replace="custom/status/status"></div>
+    <div class="col-md-12 row">
+        <div class="col-md-8">
+     	    <div class="form-group row hideclass">
+                <label for="example-text-input" class="col-3 col-form-label"></label>
+                <div class="col-6">
+                    <input id="getPlaybookid" th:value="${playbookid}">
+                </div>
+            </div>
+        
+            <div class="form-group row">
+                <label for="example-text-input" class="col-3 col-form-label">Playbook Name<span class="redmarker">*</span></label>
+                <div class="col-6">
+                    <input class="form-control" disabled="disabled" type="text" value="" id="pldGetPlaybookName">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="example-text-input" class="col-3 col-form-label"></label>
+                <div class="col-9 row">
+                	<div class="col-4">
+             		    <button type="button" class="btn btn-secondary btn-hover-brand" onclick="$('#FileUpload').click()" disabled="disabled">Upload Playbook</button>
+                    	<input id="FileUpload" style="display:none;" type='file' accept=".yml" onchange='openFile(event)'>
+                	</div>
+                    
+                    <div class="displayitem col-8" data-value=""></div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="example-text-input" class="col-3 col-form-label">Playbook Content</label>
+                <div class="col-9">
+                    <textarea class="form-control" readonly="" rows="3" id="getContenOfFile" style="min-height: 200px; background: #f8f8f8"></textarea>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="example-text-input" class="col-3 col-form-label"></label>
+                <div class="col-9">
+
+                    <table class="table hideclass" id="tblPlaybookInput" style="border:1px solid lightgray;">
+                        <caption class="d-none"></caption>
+                        <thead style="background: lightgray">
+                            <tr>
+                                <th scope="col" style="width:20%" class="text-center">Input Type</th>
+                                <th scope="col" style="width:40%" class="text-center">Variable</th>
+                                <th scope="col" style="width:40%" class="text-center">Default Value</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+
+                </div>
+            </div>
+            
+            <div class="form-group row">
+                <label for="example-text-input" class="col-3 col-form-label"></label>
+                <div class="col-9">
+
+                    <table class="table hideclass" id="tblPlaybookOutput" style="border:1px solid #ccc!important">
+                        <caption class="d-none"></caption>
+                        <thead style="background:#ccc!important">
+                            <tr>
+                                <th scope="col" style="width: 50%" class="text-center">Variable</th>
+                                <th scope="col" style="width: 50%" class="text-center">Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        	<tr class="standard">
+                        	</tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group row">
+                <label for="example-text-input" class="col-3 col-form-label">Status</label>
+                <div class="col-9">
+                    <span class="staNew kt-badge kt-badge--primary kt-badge--rounded statussize hideclass" style="background: #d9a747;">New</span>
+                </div>
+            </div>
+            
+            <div class="form-group row">
+                <label for="example-text-input" class="col-3 col-form-label">Notes</label>
+                <div class="col-9">
+                    <textarea class="form-control" rows="3" id="pldNotes" disabled="disabled"></textarea>
+                </div>
+            </div>            
+        </div>
+    </div>
+    <div class="col-md-12 row">
+        <div class="col-md-8">
+            <div class="form-group row">
+                <label for="example-text-input" class="col-3 col-form-label"></label>
+                <div class="col-9">
+                    <label for="example-text-input" class="col-10 col-form-label">
+                        <span class="la la-info-circle"></span>
+                        For playbook output system will auto capture output <span class="textbold">variable - value</span> in Playbook content with systax: <span class="textbold">msg: "variable_name = value"</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 textright">
+            <div>
+	            <button th:if="${#strings.contains(session.userProfile.permission, 'APPROVE_&_REJECT_PLAYBOOK')}" type="button" class="btn btn-approved" id="btnApproved">
+	            <em class="la la-check-circle"></em>Approve</button>
+	            <button th:if="${#strings.contains(session.userProfile.permission, 'APPROVE_&_REJECT_PLAYBOOK')}" type="button" class="btn btn-danger" id="btnReject">
+	            <em class="la la-ban"></em>Reject</button>
+                <button th:if="${#strings.contains(session.userProfile.permission, 'VIEW_HISTORY_PLAYBOOK')}" type="button" class="btn btn-info" id="btnViewHistory">
+                    <em class="la la-history"></em>View History</button>
+	            <button type="button" class="btn btn-cancel" id="btnBackToApp"><em class="la la-times-circle"></em>Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+	</div>
+	<!-- end:: Content -->
+
+</div>
+
+<div class="modal fade" id="kt_modal_App" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Approve Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12">Remarks</div>
+                <div class="col-md-12"><textarea class="form-control" rows="3" id="appRemarks"></textarea></div>
+                <div class="col-md-12">By clicking "Approve", the status of Playbook will be updated from New to Approved</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="btnYesApp">Approve</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="kt_modal_Rej" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Reject Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12">Remarks</div>
+                <div class="col-md-12"><textarea class="form-control" rows="3" id="rejRemarks"></textarea></div>
+                <div class="col-md-12">By clicking "Reject", the status of Playbook will be updated from New to Rejected</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="btnYesRej">Reject</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="common/footer"></div>
+

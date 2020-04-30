@@ -1,0 +1,111 @@
+<div th:replace="common/header"></div>
+
+<link th:href="@{/css/custom/jobmanagement/job-management.css}"
+      href="../../css/custom/jobmanagement/job-management.css" rel="stylesheet"
+      type="text/css"/>
+<script th:src="@{/js/custom/playbook-history.js}" type="text/javascript"></script>
+<script th:inline="javascript">
+    var hasRestorePermission = [[${#strings.contains(session.userProfile.permission, 'RESTORE_HISTORICAL_PLAYBOOK')}]];
+</script>
+<div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor">
+    <div style="padding: 0% 0% 0% 2%;">
+        <label style="margin:1% 0% 0% 0.5%">
+            <span style="font-weight:600; font-size:20px; color:#333333">Playbook Management</span>
+            <span style="font-weight:100; font-size:25px; color:#686868;">&nbsp|&nbsp</span>
+        </label>
+        <label style="margin:2% 0% 0% 0.5%">
+            <span> Master Data</span>
+            <span> &nbsp &gt; &nbsp</span>
+            <span> Playbook Management</span>
+            <span> &nbsp &gt; &nbsp</span>
+            <span style="color: #e1261c;"> History</span>
+        </label>
+    </div>
+    <!-- begin:: Content -->
+    <div class="kt-content  kt-grid__item kt-grid__item--fluid" id="kt_content">
+
+        <div class="alert alert-light alert-elevate row">
+            <div class="col-md-12">
+                <br/>
+                <div class="row border-job-information">
+                    <label class="text-job-information">Current Version Information</label>
+                    <div class="col-md-12 row form-group" style="margin-top: 20px;">
+                        <div class="col-md-6">
+                            <input type="hidden" th:value="${playbookId}" id="playbookId"/>
+                            Playbook Name: <label id="txtWorkflowName"></label>
+                        </div>
+                        <div class="col-md-6">
+                            Playbook File: <a id="downloadFilePB" class="downloadFilePB" href="#"></a><a href="#"
+                                                                                                         class="downloadFilePB">
+                            <em class="la la-download icon-download"></em></a>
+                        </div>
+                    </div>
+                    <div class="col-md-12 row form-group">
+                        <div class="col-md-6">
+                            Version <label id="txtVersion"></label>
+                        </div>
+                        <div class="col-md-6">
+                            Updated by <label id="txtUpdateBy"></label> at <label id="txtUpdateAt"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 text-right">
+                <button type="button" class="btn btn-add-default" id="btnBackToCurrent">
+                    <em class="la la-arrow-left"></em>Back to current version
+                </button>
+            </div>
+            <div class="col-md-12">
+                <div class="hideclass deletemessage" style="padding-top: 2%;">
+                    <div class="alert alert-success col-2" role="alert">
+                        <div class="alert-text">Delete successfully</div>
+                    </div>
+                </div>
+
+                <div class="userGroupListingDatatable" id="kt_datatable"></div>
+
+                <div>
+                    <table id="header-fixed"
+                           class="table m-table m-table--head-bg-accent">
+                        <caption class="d-none"></caption>
+                        <tr class="d-none">
+                            <th scope="col"></th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- end:: Content -->
+    <div class="modal fade" id="kt_modal_restore" tabindex="-1"
+         role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div style="display: none;">
+                        <input value="" id="historyId">
+                    </div>
+                    <p>Are you sure you want to restore to the previous version?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                            data-dismiss="modal">No
+                    </button>
+                    <button type="button" class="btn btn-primary" id="btnYesRestore">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="common/footer"></div>
+
+
+
+

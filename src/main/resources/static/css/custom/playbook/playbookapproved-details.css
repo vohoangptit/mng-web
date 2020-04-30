@@ -1,0 +1,25 @@
+.redmarker{
+	color: red;
+}
+
+.textright{
+	text-align: right;
+}
+
+.textbold{
+	font-weight: bold;
+}
+
+.hideclass{
+	display: none;
+}
+
+.textcen{
+	text-align: center;
+}
+
+.statussize{
+	height: 90%;
+    width: 40%;
+    font-size: 13px;
+}

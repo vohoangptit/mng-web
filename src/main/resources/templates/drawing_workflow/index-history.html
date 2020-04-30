@@ -1,0 +1,13 @@
+<div th:replace="common/header"></div>
+<script th:inline="javascript">
+    $( document ).ready(function() {
+        var workflowid = [[${workflowid}]];
+        $('#workflowid').val(workflowid);
+    });
+</script>
+<iframe title="" src="/history/editor/" id="WorkflowFrame" style="width:100%;height:100%;border:none;">
+</iframe>
+<input value="" type="hidden" id="workflowid"/>
+<input value="0" type="hidden" id="isError"/>
+<input value="" type="hidden" id="messageError"/>
+<div th:replace="common/footer"></div>

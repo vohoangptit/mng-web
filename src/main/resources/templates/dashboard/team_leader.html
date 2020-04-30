@@ -1,0 +1,219 @@
+<div th:replace="common/header"></div>
+
+<link th:href="@{/css/custom/dashboard/leader.min.css}"
+      href="../../css/custom/dashboard/leader.min.css" rel="stylesheet"
+      type="text/css"/>
+<script th:src="@{/js/dashboard/leader.js}" type="text/javascript"></script>
+<div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor">
+    <div class="row" style="padding: 0% 0% 0% 2%; width: 100%">
+        <label style="margin: 1% 0% 0% 0.5%"> <span
+                style="font-weight: 600; font-size: 20px; color: #333333">Dashboard</span> <span
+                style="font-weight: 100; font-size: 25px; color: #686868;">&nbsp|&nbsp</span>
+            <span style="color: #e1261c;font-weight: 600; font-size: 20px"> Leader</span>
+        </label>
+    </div>
+    <!-- begin:: Content -->
+    <div class="kt-content  kt-grid__item kt-grid__item--fluid dashboard"
+         id="kt_content">
+        <div class="row mb-3">
+            <div class="col-md-5">
+                <div class="kt-portlet h-100">
+                    <div class="kt-portlet__head px-3">
+                        <div class="kt-portlet__head-label">
+                            <h3 class="kt-portlet__head-title">
+                                Playbooks
+                            </h3>
+                        </div>
+                        <div class="kt-portlet__head-toolbar">
+                            <a href="masterdata/playbook" class="btn btn-link btn-sm">
+                                More Detail
+                            </a>
+                        </div>
+                    </div>
+                    <div class="kt-portlet__body kt-portlet__body--fluid p-3">
+                        <div class="col-md-12 row text-center">
+                            <div class="col-md-3">
+                                <div class="circle">
+                                    <label id="new_status"></label>
+                                </div>
+                                <label class="label-status">New</label>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="circle">
+                                    <label id="pending_status"></label>
+                                </div>
+                                <label class="label-status">Pending Approval</label>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="circle">
+                                    <label id="approved_status"></label>
+                                </div>
+                                <label class=" label-status">Approved</label>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="circle">
+                                    <label id="reject_status"></label>
+                                </div>
+                                <label class=" label-status">Rejected</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-7">
+                <div class="kt-portlet h-100">
+                    <div class="kt-portlet__head px-3">
+                        <div class="kt-portlet__head-label">
+                            <h3 class="kt-portlet__head-title">
+                                Job Assignment
+                            </h3>
+                        </div>
+                        <div class="kt-portlet__head-toolbar">
+                            <a href="job-planning/listing" class="btn btn-link btn-sm">
+                                More Detail
+                            </a>
+                        </div>
+                    </div>
+                    <div class="kt-portlet__body kt-portlet__body--fluid p-3">
+                        <div class="col-md-12 row text-center">
+                            <div class="col-job-text">
+                                <div class="circle">
+                                    <label id="job_pending_status"></label>
+                                </div>
+                                <label class="label-status">Pending Acceptance</label>
+                            </div>
+                            <div class="col-job-text">
+                                <div class="circle">
+                                    <label id="job_accept_status"></label>
+                                </div>
+                                <label class="label-status">Accepted Job</label>
+                            </div>
+                            <div class="col-job-text">
+                                <div class="circle">
+                                    <label id="job_reject_status"></label>
+                                </div>
+                                <label class="label-status">Rejected Job</label>
+                            </div>
+                            <div class="col-job-text">
+                                <div class="circle">
+                                    <label id="job_exec_status"></label>
+                                </div>
+                                <label class="label-status">Executing Job</label>
+                            </div>
+                            <div class="col-job-text">
+                                <div class="circle">
+                                    <label id="job_complete_status"></label>
+                                </div>
+                                <label class="label-status">Completed Job Execution</label>
+                            </div>
+                            <div class="col-job-text">
+                                <div class="circle">
+                                    <label id="job_stop_status"></label>
+                                </div>
+                                <label class="label-status">Stopped Job Execution</label>
+                            </div>
+                            <div class="col-job-text">
+                                <div class="circle">
+                                    <label id="job_fail_status"></label>
+                                </div>
+                                <label class="label-status">Failed Job Execution</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-5">
+                <div class="kt-portlet h-100">
+                    <div class="kt-portlet__head px-3">
+                        <div class="kt-portlet__head-label">
+                            <h3 class="kt-portlet__head-title">
+                                Up Coming Tasks
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="kt-portlet__body p-3">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#"
+                                   onclick="return getJobExecToDoToday()">Today</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#" onclick="return getJobExecToDoOnWeek()">This
+                                    Week</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#" onclick="return getJobExecToDoOnMonth()">This
+                                    Month</a>
+                            </li>
+                        </ul>
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div id="home" class="tab-pane active table-scroll">
+                                <table class="t-job-list" id="up_coming_task_tbl">
+                                    <caption class="d-none"></caption>
+                                    <thead>
+                                        <th scope="col">Operation</th>
+                                        <th scope="col">Job Name</th>
+                                        <th scope="col">Action</th>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-7">
+                <div class="kt-portlet h-100">
+                    <div class="kt-portlet__head px-3">
+                        <div class="kt-portlet__head-label">
+                            <h3 class="kt-portlet__head-title">
+                                Job Assignment List
+                            </h3>
+                        </div>
+                        <div class="kt-portlet__head-toolbar">
+                            <a href="job-planning/listing" class="btn btn-link btn-sm">
+                                More Detail
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div id="kt_dttb_assignment"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="kt_approve_reject_job" tabindex="-1"
+         role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Comfirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="confirm-message">Do you want to Reject the job ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-add-default" id="btnYes">Yes</button>
+                    <button type="button" class="btn btn-delete-default"
+                            data-dismiss="modal">No</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- end:: Content -->
+    <div class="loader" id="loader"></div>
+</div>
+<div th:replace="common/footer"></div>
+
+
+
+

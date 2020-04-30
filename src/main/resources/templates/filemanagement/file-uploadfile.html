@@ -1,0 +1,113 @@
+<div th:replace="common/header"></div>
+
+<link th:href="@{/css/custom/filemanagement/filemanagement-uploadfile.css}"
+	href="../../css/custom/filemanagement/filemanagement-uploadfile" rel="stylesheet"
+	type="text/css" />
+
+<script th:src="@{/js/custom/filemanagement-uploadfile.js}" type="text/javascript"></script>
+
+<div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor">
+	<div style="padding: 0% 0% 0% 2%;">
+            <label style="margin:1% 0% 0% 0.5%">
+				<span style="font-weight:600; font-size:20px; color:#333333">File Management</span>
+				<span style="font-weight:100; font-size:25px; color:#686868;">&nbsp|&nbsp</span>
+			</label>                      
+			<label style="margin:2% 0% 0% 0.5%">
+				<span> Home</span>
+	            <span> &nbsp &gt; &nbsp</span>
+				<span> Master Data</span>
+				<span> &nbsp &gt; &nbsp</span>
+				<span> File Management Listing</span>
+				<span> &nbsp &gt; &nbsp</span>
+				<span style="color: #e1261c;"> Upload File</span>
+			</label>
+	</div>
+	<!-- begin:: Content -->
+	<div class="kt-content  kt-grid__item kt-grid__item--fluid" id="kt_content">
+
+<div class="alert alert-light alert-elevate row">
+
+    <div class="col-md-12">
+        <label for="FileUpload1" class="btn btn-accent btn-upload-container" style="margin-top: 6px;border-radius: 100px;border: solid 0.5px #1565c0;background-color: white;color: #1565c0 !important;">
+            <em class="la la-upload"></em>
+            Upload File
+        </label>
+        <input id="FileUpload1" style="display:none;" type='file' onchange='openFile(event)' multiple>
+    </div>
+
+    <div class="col-md-12">
+        <table class="table" id="tblfilelisting">
+            <caption class="d-none"></caption>
+            <thead>
+                <tr>
+                    <th scope="col" style="width:10%">S/N</th>
+                    <th scope="col" style="width:30%">Name</th>
+                    <th scope="col" style="width:20%">Description</th>
+                    <th scope="col" style="width:20%">File</th>
+                    <th scope="col" style="width:10%">Status</th>
+                    <th scope="col" style="width:10%">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col-md-12">
+        <div class="kt-form__actions adduser-textright">
+        	<span id="uploadErrorMsg" style="display:none" class="red" th:utext="#{message.upload.error}">Sorry, an error has occurred. Please try again.</span>
+        	<span id="uploadFileTypeErrorMsg" style="display:none" class="red" th:utext="#{message.upload.file.type.error}">Sorry. Only support file with extension: .txt, .doc, .docx</span>
+        	<span id="noFilesSelectedMsg" style="display:none" class="red" th:utext="#{message.upload.no.file.selected}">Please select at least 1 file.</span>
+            <button type="button" class="btn btn-add-default" onclick="checkValidateName()" id="btnCheckValidation">
+            	<em class="la la-floppy-o"></em>Save</button>
+            <button type="reset" class="btn btn-cancel" onclick="window.location.href='/menu/masterdata/file-listing'">
+            	<em class="la la-times-circle"></em>Cancel</button>
+        </div>
+    </div>
+
+</div>
+
+	</div>
+	<!-- end:: Content -->
+
+</div>
+
+<div class="modal" id="uploadFileConfirmation" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Upload files confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">�</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12">You are proceeding to upload new files with details information as below:</div>
+
+                <div class="col-md-12">
+                    <table class="table" id="tblResultResponse">
+                        <caption class="d-none"></caption>
+                        <thead>
+                            <tr>
+                                <th scope="col" style="width:10%">S/N</th>
+                                <th scope="col" style="width:30%">Name</th>
+                                <th scope="col" style="width:20%">Description</th>
+                                <th scope="col" style="width:20%">File</th>
+                                <th scope="col" style="width:10%">Status</th>
+                                <th scope="col" style="width:15%">Result</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+            	<button type="button" class="btn btn-add-default" id="saveResultsBtn" onclick="saveResults()"><em class="la la-floppy-o"></em>Save</button>
+                <button type="button" class="btn btn-cancel" data-dismiss="modal"><em class="la la-times-circle"></em>Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="common/footer"></div>

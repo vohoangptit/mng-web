@@ -1,0 +1,520 @@
+<div th:replace="common/header"></div>
+
+<link th:href="@{css/custom/user/userDetail.css}"
+	href="../../css/custom/user/userDetail.css" rel="stylesheet"
+	type="text/css" />
+
+<script th:inline="javascript" th:src="@{js/custom/add-user.js}">
+</script>
+<script th:inline="javascript" th:src="@{js/custom/edit-user.js}"></script>
+<script>
+var isEdit = true;
+$(document).ready(function() {
+	var names = "[[${groupNames}]]";
+	var userGroupsNames = names.split(',');
+	var ids = "[[${groupIds}]]";
+	var userGroupsIds = ids.split(','); //unable to parse in edit-user.js
+	loadUserGroups(userGroupsIds, userGroupsNames);
+
+});
+
+function resetPassword() {
+	$('#resetPasswordModal').modal('hide');
+	$.post('/nera/api/resetPassword',
+			{
+				id : [[${user.id}]]
+			}, function(result) {
+				if (result) {
+					$('#resetPasswordSuccessful').modal();
+				} else {
+					$('#resetPasswordFailed').modal();
+				}
+			})
+}
+
+function unblockUser() {
+	$('#unblockUserModal').modal('hide');
+	$.post('/nera/api/unblockOneUser',
+			{
+				id : [[${user.id}]]
+			}, function(result) {
+				if (result) {
+					$('#unblockUserSuccessful').modal();
+				} else {
+					$('#unblockUserFailed').modal();
+				}
+			})
+}
+
+function deleteUser() {
+	$('#deleteUserModal').modal('hide');
+	var userId = $('#userId').val();
+	
+	var userIds = [userId]; 
+	var obj = {'ids': userIds}
+	var jsonObj = JSON.stringify(obj);
+	$.ajax({
+		url: '/nera/api/deleteUsers/',
+		type: 'delete',
+		contentType: 'application/json',
+		dataType: 'text',
+		data :  jsonObj,
+		success: function(response) {
+			if (response) {
+				$('#deleteUserSuccessful').modal();
+			} else {
+				$('#deletetUserFailed').modal();
+			}
+		}
+	});
+}
+</script>
+<div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor">
+
+	<!-- begin:: Content -->
+	<div class="kt-content  kt-grid__item kt-grid__item--fluid row"
+		id="kt_content">
+
+		<div class="col-md-3">
+			<div class="row">
+				<div class="col-md-3"></div>
+				<div class="col-md-7">
+				
+					<div class="alert-light alert-elevate adduser-image-mb">
+						<img alt="" id="imagePreview"  width="100%" th:src="${user.image} != '' ? *{'data:image/png;base64,'+user.image} : @{/images/logos/ava.png}"/>
+					</div>
+					<form action="/updateUserForm" th:action="@{/updateUserForm}" id="form" enctype="multipart/form-data" method="POST">
+					<div class="adduser-uploadbtn">
+						<input class="form-control btn btn-success" type="button" id="example-text-input"  
+							value="Upload image" onclick="$('#inputFile').click()">
+							<input type="file" accept="image/jpg, image/jpeg, image/png" name="image" id="inputFile" style="display:none" onchange="loadFile(event)"/>
+					</div>
+					
+				</div>
+				<div class="col-md-2"></div>
+			</div>
+		</div>
+
+		<div class="col-md-8">
+			<div>
+				<div class="kt-portlet">
+					<div class="kt-form">
+						<div style="padding-left:5%">
+							<div class="form-group row">
+								<div class="redmarker" th:if="${showUnblockBtn}" th:utext="#{message.blocked.five.attemps}"></div>
+							</div>
+								<div class="form-group row">
+								<label for="example-text-input" class="col-3 col-form-label">
+										Email <span class="redmarker">*</span>
+									</label>
+									<div class="col-8">
+										<input class="form-control" name="email" type="text" id="email" onkeydown="hideEmailError();" onblur="checkExistingEmail(this);validateEmail(this);" th:value="${user.email}">
+										<span id="emailError" th:utext="#{message.email.empty}" class="hiddenred"></span>
+										<span id="emailExistError" th:utext="#{message.email.exist}" class="hiddenred"></span>
+										<span id="emailFormatError" th:utext="#{message.email.format.error}" class="hiddenred"></span>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="example-text-input" class="col-3 col-form-label">
+										Full Name <span class="redmarker">*</span>
+									</label>
+									<div class="col-8">
+										<input class="form-control" name="fullName" type="text" id="fullName" onclick="hideFullNameError()" th:value="${user.fullName}">
+										<span id="fullNameError" th:utext="#{message.full.name.empty}" class="hiddenred"></span>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="exampleSelect1" class="col-3 col-form-label">
+										User Group <span class="redmarker">*</span>
+									</label>
+									<div class="col-6">
+	
+										<div class="dropdown">
+											<button
+												class="btn btn-secondary dropdown-toggle adduser-drop-width"
+												type="button" id="dropdownMenuButton" data-toggle="dropdown"
+												onclick="hideGroupsError()"
+												aria-haspopup="true" aria-expanded="false">Select
+												the User Groups</button>
+												<span id="groupsError" th:utext="#{message.groups.empty}" class="hiddenred"></span>
+											<div class="dropdown-menu adduser-drop-width"
+												aria-labelledby="dropdownMenuButton">
+												<div>
+													<div class="form-group row">
+	
+														<div class="col-md-1"></div>
+														<div class="col-md-10">
+															<input type="email" class="form-control"
+																aria-describedby="emailHelp"
+																placeholder="Search" onkeyup="searchGroups(this)">
+														</div>
+														<div class="col-md-1"></div>
+													</div>
+													<div class="form-group row">
+	
+														<div class="col-md-1"></div>
+														<div class="col-md-10">
+															<div class="kt-checkbox-list">
+																<div th:each="entry : ${groups.entrySet()}">
+																	<label class="kt-checkbox"> 
+																		<input name="groupCheckboxes" type="checkbox" th:value="${entry.key}" th:attr="data-name=${entry.value}"/> <label th:utext="${entry.value}" class="ml-2"></label> <span></span>
+		                                                            </label>
+	                                                            </div>
+	                                                            <input type="hidden" name="id" th:value="${user.id}"/>
+	                                                            <input type="hidden" name="selectedGroupsIds[]" />
+	                                                            <input type="hidden" name="selectedGroupsNames" />
+	                                                            <input type="hidden" name="selectedDepartmentName" />
+	                                                            <input type="hidden" name="selectedJobTitleName" />
+															</div>
+															<div class="col-md-1"></div>
+														</div>	
+													</div>
+													<div style="text-align: center;">
+														<div class="kt-form__actions">
+															<button type="button" class="btn btn-add-default btn-sm"
+																id="btnAddNewUser">Add</button>
+															<button type="reset" class="btn btn-cancel btn-sm" id="resetButton">Cancel</button>
+															
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+	
+									</div>
+								</div>
+								<div class="row">
+									<label for="example-text-input" class="col-3 col-form-label"></label>
+									<div class="col-8">
+										<div class="selecteddisplay"></div>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="exampleSelect1" class="col-3 col-form-label">Department</label>
+									<div class="col-8">
+										<select class="form-control" style="height: auto" name="department" id="department">
+											<option value="0" th:utext="#{message.user.please.select}"></option>
+											<option th:each="entry : ${departments.entrySet()}" th:attr="data-name=${entry.value}" th:value="${entry.key}" th:text="${entry.value}" th:selected="${entry.key == user.departmentId}"></option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="exampleSelect1" class="col-3 col-form-label">Job
+										Title</label>
+									<div class="col-8">
+										<select class="form-control" style="height: auto" name="jobTitle" id="jobTitle">
+											<option value="0" th:utext="#{message.user.please.select}"></option>
+											<option th:each="entry : ${jobTitles.entrySet()}" th:attr="data-name=${entry.value}" th:value="${entry.key}" th:text="${entry.value}" th:selected="${entry.key == user.jobTitleId}"></option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="example-text-input" class="col-3 col-form-label">Mobile
+										No</label>
+									<div class="col-8">
+										<input class="form-control" type="text" name="mobileNumber" id="mobileNo" onBlur="checkMobileNo(this)" th:value="${user.mobileNumber}">
+										<div id="mobileLengthError" class="red" style="display:none" th:utext="#{message.user.mobile.no.length.error}">Mobile number must be at least 8 digits.</div>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="exampleSelect1" class="col-3 col-form-label">Status</label>
+									<div class="col-8">
+										<div class="kt-radio-inline">
+											<div th:unless="${user.loginCount eq 5}">
+												<label class="kt-radio"> <input type="radio"
+													name="status" value="Y" th:checked="${user.active eq true}">Active<span></span>
+												</label> <label class="kt-radio"> <input type="radio"
+													name="status" value="N" th:checked="${user.active eq false}">Inactive<span></span>
+												</label>
+											</div>
+												<div th:if="${showUnblockBtn}">
+													<p th:utext="#{message.blocked}">Blocked</p>
+													<input type="hidden" name="status" value="blocked"  />
+												</div>
+										</div>
+									</div>
+								</div>
+								<div class="form-group row">
+								<label for="example-text-input" class="col-3 col-form-label">
+									<div>Last login time</div>
+									<div>(dd/mm/yyyy hh:mm)</div>
+								</label>
+								<div class="col-9">
+									<label for="example-text-input" class="col-form-label">
+										<div th:utext="${user.formattedLastLogin}"></div>
+									</label>
+								</div>
+							</div>
+						</form>
+						<div class="row">
+							<span class="col-md-12 col-form-label">
+								<button class="btn btn-secondary shadow" onclick="prepareResetPassword()">Reset
+									Password</button>
+								&nbsp;&nbsp;
+								<button th:if="${showUnblockBtn}" class="btn btn-secondary shadow" onclick="prepareUnblockUser()">Unblock User</button>
+							</span>
+						</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div>
+				<div class="kt-form__actions adduser-textright">
+					<button id="saveBtn" type="button" class="btn btn-add-default" 
+						data-target="#kt_modal_1" onclick="prepareUpdateConfirmation()">Save</button>
+					<button type="reset" class="btn btn-cancel" onclick="window.location.href='/menu/system/userListing'">Cancel</button>
+					<button type="button" class="btn btn-delete-default" data-toggle="modal" data-target="#kt_modal_2" onclick="prepareDeleteUser()">Delete</button>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<!-- end:: Content -->
+
+</div>
+
+<div class="modal fade" id="confimUpateModal" tabindex="-1" role="dialog"
+	aria-labelledby="exampleModalLabel" style="display: none;"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel" th:utext="#{message.user.update.confirm.title}">Update Confirmation</h5>
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p th:utext="#{message.confirm.update.user}">Are you sure you want to update information?</p>
+				
+				<br/>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-add-default" onclick="$('#form').submit()">Yes</button>
+				<button type="button" class="btn btn-cancel" data-dismiss="modal">No</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="invalidFileModal" tabindex="-1" role="dialog"
+	aria-labelledby="exampleModalLabel" style="display: none;"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Invalid File</h5>
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p th:utext="#{message.invalid.file}">System does not support this uploaded file extension</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" onclick="$('#invalidFileModal').modal('hide');"><span th:utext="#{message.ok}">OK</span></button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="resetPasswordModal" tabindex="-1" role="dialog"
+	aria-labelledby="exampleModalLabel" style="display: none;"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Reset Password</h5>
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p th:utext="#{message.confirm.reset.password}">Are you sure you want to reset password?</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-cancel" data-dismiss="modal">No</button>
+				<button type="button" class="btn btn-add-default" onclick="resetPassword()">Yes</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="resetPasswordSuccessful" tabindex="-1" role="dialog"
+	aria-labelledby="exampleModalLabel" style="display: none;"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Reset Password</h5>
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p th:utext="#{message.reset.password.successful}">Reset password is successful</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" onclick="$('#resetPasswordSuccessful').modal('hide');"><span th:utext="#{message.ok}">OK</span></button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="resetPasswordFailed" tabindex="-1" role="dialog"
+	aria-labelledby="exampleModalLabel" style="display: none;"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Reset Password</h5>
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p th:utext="#{message.reset.password.failed}">Reset password has failed</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" onclick="$('#resetPasswordFailed').modal('hide');"><span th:utext="#{message.ok}">OK</span></button>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="unblockUserModal" tabindex="-1" role="dialog"
+	aria-labelledby="exampleModalLabel" style="display: none;"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel" th:utext="#{message.user.unblock.confirm}">Unblock User Confirmation</h5>
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p th:utext="#{message.confirm.unblock.user(${user.fullName})}">Are you sure you want to unblock ?</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+				<button type="button" class="btn btn-primary" onclick="unblockUser()">Yes</button>			
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="unblockUserSuccessful" tabindex="-1" role="dialog"
+	aria-labelledby="exampleModalLabel" style="display: none;"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Unblock User</h5>
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p th:utext="#{message.unblock.user.successful}">Unblock user is successful</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" onclick="$('#unblockUserSuccessful').modal('hide');location.reload(true);"><span th:utext="#{message.ok}">OK</span></button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="unblockUserFailed" tabindex="-1" role="dialog"
+	aria-labelledby="exampleModalLabel" style="display: none;"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Unblock User</h5>
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p th:utext="#{message.unblock.user.failed}">Unblock user has failed</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" onclick="$('#unblockUserFailed').modal('hide');"><span th:utext="#{message.ok}">OK</span></button>
+			</div>
+		</div>
+	</div>
+</div>
+<!--  -->
+<div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog"
+	aria-labelledby="exampleModalLabel" style="display: none;"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel" th:utext="#{message.user.delete.confirm}">Delete User Confirmation</h5>
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p th:utext="#{message.confirm.delete.user(${user.fullName})}">Are you sure you want to delete ?</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+				<button type="button" class="btn btn-primary" onclick="deleteUser()">Yes</button>			
+			</div>
+			<input type="hidden" id="userId" th:value="${user.id}" />
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="cannotDeleteModal" tabindex="-1" role="dialog"
+	aria-labelledby="exampleModalLabel" style="display: none;"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel" th:utext="#{message.user.delete.failed.status}">Delete User Failed</h5>
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p th:utext="#{message.user.delete.failed.reason}">This user is still active. Delete failed.</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-dismiss="modal" th:utext="#{message.ok}">OK</button>
+			</div>
+			<input type="hidden" id="userId" th:value="${user.id}" />
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="deleteUserSuccessful" tabindex="-1" role="dialog"
+	aria-labelledby="exampleModalLabel" style="display: none;"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Delete User</h5>
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p th:utext="#{message.delete.user.successful}">Delete user is successful</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" onclick="$('#deleteUserSuccessful').modal('hide');location.href='/menu/system/userListing';"><span th:utext="#{message.ok}">OK</span></button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="deleteUserFailed" tabindex="-1" role="dialog"
+	aria-labelledby="exampleModalLabel" style="display: none;"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Delete User</h5>
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p th:utext="#{message.delete.user.failed}">Delete user has failed</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" onclick="$('#deleteUserFailed').modal('hide');"><span th:utext="#{message.ok}">OK</span></button>
+			</div>
+		</div>
+	</div>
+</div>
+<div th:replace="common/footer"></div>

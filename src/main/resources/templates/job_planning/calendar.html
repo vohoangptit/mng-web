@@ -1,0 +1,310 @@
+<div th:replace="common/header"></div>
+<link th:href="@{/css/custom/jobplanning/calendar.min.css}"
+      href="../../css/custom/jobplanning/calendar.min.css" rel="stylesheet"
+      type="text/css" />
+<script src="http://cdn.jsdelivr.net/timepicker.js/latest/timepicker.min.js"></script>
+<link href="http://cdn.jsdelivr.net/timepicker.js/latest/timepicker.min.css" rel="stylesheet"/>
+<script th:inline="javascript">
+    var hasViewPermission = [[${#strings.contains(session.userProfile.permission, 'VIEW_JOB_PLANNING')}]];
+    var hasAssignJobPermission = [[${#strings.contains(session.userProfile.permission, 'ASSIGN_JOB')}]];
+</script>
+<script th:src="@{/js/job-planning/calendar.js}" type="text/javascript"></script>
+
+<div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor">
+    <div class="kt-content  kt-grid__item kt-grid__item--fluid" id="kt_content">
+        <div class="alert alert-light alert-elevate row">
+            <div id="calendar"></div>
+        </div>
+
+    </div>
+
+</div>
+<div class="modal fade" id="kt_modal_edit" tabindex="-1"
+     role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detail Job Assignment</h5>
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div id="validateData" class="hide-class font-italic">
+                            <label class="text-danger ml-4" id="lblError"></label>
+                        </div>
+                        <div class="border rounded p-3 m-3 title-parent">
+                            <label class="title-child font-weight-bold">Job
+                                Selection</label>
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label class="col-form-label">Job Name</label> <label
+                                        class="col-form-label text-danger">*</label>
+                                </div>
+                                <div class="col-md-7 off-set-1">
+                                    <select class="form-control" style="width: 95%; height: auto"
+                                            id="selectJobId">
+                                        <option value="">Select Job</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label class="col-form-label">Description</label>
+                                </div>
+                                <div class="col-md-7 off-set-1">
+                                    <label class="col-form-label" id="descriptionJob"></label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <label class="col-form-label">Workflow Name</label> <label
+                                        class="col-form-label text-danger">*</label>
+                                </div>
+                                <div class="col-md-7 off-set-1">
+                                    <label class="col-form-label" id="workflowName"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border rounded p-3 m-3 title-parent">
+                            <label class="title-child font-weight-bold">Assignment</label>
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label>Execution Date</label> <label
+                                        class="col-form-label text-danger">*</label>
+                                </div>
+                                <div class="col-md-7 off-set-1 row">
+                                    <div class="input-group date col-md-12">
+                                        <input placeholder="Select date" type="text"
+                                               class="form-control m_datepicker rounded" id="DateExec"
+                                               name="DateExec"> <span> <em
+                                            class="la la-calendar"></em>
+											</span>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label class="col-form-label">Execution Time</label> <label
+                                        class="col-form-label text-danger">*</label>
+                                </div>
+                                <div class="col-md-7 off-set-1 row">
+                                    <div class="input-group date col-md-6">
+                                        <input class="col-form-label border rounded parent-time-picker" type="text"
+                                               placeholder="Start time" id="startTime" style="width: inherit;"> <span> <em
+                                            class="la la-clock-o"></em>
+												</span>
+                                    </div>
+                                    <div class="input-group date col-md-6">
+                                        <input class="col-form-label border rounded parent-time-picker" type="text"
+                                               placeholder="End time" id="endTime" style="width: inherit;"> <span> <em
+                                            class="la la-clock-o"></em>
+												</span>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label class="col-form-label">Planner</label> <label
+                                        class="col-form-label text-danger">*</label>
+                                </div>
+                                <div class="col-md-7 off-set-1">
+                                    <select class="form-control" style="width: 95%; height: auto"
+                                            id="plannerSelect">
+                                        <option value="">Select Planner</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label class="col-form-label">Assignee</label> <label
+                                        class="col-form-label text-danger">*</label>
+                                </div>
+                                <div class="col-md-7 off-set-1">
+                                    <select class="form-control" style="width: 95%; height: auto"
+                                            id="assigneeSelect">
+                                        <option value="">Select Assignee</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <label class="col-form-label">Job Status</label>
+                                </div>
+                                <div class="col-md-7 off-set-1">
+                                    <label class="col-form-label" id="jobAssignStatus"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <button th:if="${#strings.contains(session.userProfile.permission, 'ASSIGN_JOB')}" onclick="CreateOrUpdate()" class="shadow btn btn-add-default mr-2" id="btnDetailSave">Save</button>
+                            <button th:if="${#strings.contains(session.userProfile.permission, 'ASSIGN_JOB')}" class="shadow btn btn btn-delete-default mr-2"
+                                    id="btnDetailDelete">Delete
+                            </button>
+                            <button class="shadow btn btn-cancel"
+                                    data-dismiss="modal">Cancel
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="border rounded contentWorkflowDetail"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="kt_modal_Delete" tabindex="-1"
+     role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div style="display: none;">
+                    <input value="" id="deleteId">
+                </div>
+                <p>Are you sure you want to delete the selected job assignment?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-cancel" data-dismiss="modal">No</button>
+                <button type="button" class="btn btn-add-default"
+                        id="btnYesDelete">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="kt_modal_confirm" tabindex="-1"
+     role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="">Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div style="display: none;">
+                    <input value="" id="jobAssignId">
+                </div>
+                <p id="txtConfirm">Are you sure you want to create a new job assignment?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-cancel" data-dismiss="modal">No</button>
+                <button type="button" class="btn btn-add-default"
+                        id="btnConfirm">Yes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="kt_modal_view"
+     role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detail Job Assignment</h5>
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="border rounded p-3 m-3 title-parent">
+                            <label class="title-child font-weight-bold">Job
+                                Selection</label>
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label class="col-form-label">Job Name</label> <label
+                                        class="col-form-label text-danger">*</label>
+                                </div>
+                                <div class="col-md-7 off-set-1">
+                                    <label class="col-form-label" id="job_name"></label>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label class="col-form-label">Description</label>
+                                </div>
+                                <div class="col-md-7 off-set-1">
+                                    <label class="col-form-label" id="job_description"></label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <label class="col-form-label">Workflow Name</label> <label
+                                        class="col-form-label text-danger">*</label>
+                                </div>
+                                <div class="col-md-7 off-set-1">
+                                    <label class="col-form-label" id="workflow_name"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border rounded p-3 m-3 title-parent">
+                            <label class="title-child font-weight-bold">Assignment</label>
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label>Execution Date</label> <label
+                                        class="col-form-label text-danger">*</label>
+                                </div>
+                                <div class="col-md-7 off-set-1">
+                                    <label class="col-form-label" id="date_exec"></label>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label class="col-form-label">Execution Time</label> <label
+                                        class="col-form-label text-danger">*</label>
+                                </div>
+                                <div class="col-md-7 off-set-1">
+                                    <label class="col-form-label" id="time_exec"></label>
+                                </div>
+
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label class="col-form-label">Planner</label> <label
+                                        class="col-form-label text-danger">*</label>
+                                </div>
+                                <div class="col-md-7 off-set-1">
+                                    <label class="col-form-label" id="planner_name"></label>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label class="col-form-label">Assignee</label> <label
+                                        class="col-form-label text-danger">*</label>
+                                </div>
+                                <div class="col-md-7 off-set-1">
+                                    <label class="col-form-label" id="assignee_name"></label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <label class="col-form-label">Job Status</label>
+                                </div>
+                                <div class="col-md-7 off-set-1">
+                                    <label class="col-form-label" id="job_assign_status"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6" style="max-height: 94%">
+                        <div class="border rounded contentWorkflowDetail" style="margin-top: 1rem; height:94%;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+</div>
+<div class="loader" id="loader"></div>
+<div th:replace="common/footer"></div>

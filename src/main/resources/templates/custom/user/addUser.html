@@ -1,0 +1,263 @@
+<div th:replace="common/header"></div>
+
+<link th:href="@{css/custom/user/userDetail.css}"
+	href="../../css/custom/user/userDetail.css" rel="stylesheet"
+	type="text/css" />
+
+<script th:inline="javascript" th:src="@{js/custom/add-user.js}">
+</script>
+<script>
+	var isEdit = false;
+</script>
+
+<div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor">
+
+	<!-- begin:: Content -->
+	<div class="kt-content  kt-grid__item kt-grid__item--fluid row"
+		id="kt_content">
+
+		<div class="col-md-3">
+			<div class="row">
+				<div class="col-md-3"></div>
+				<div class="col-md-7">
+				
+					<div class="alert-light alert-elevate adduser-image-mb">
+						<img alt="" id="imagePreview" th:src = "@{/images/logos/ava.png}" width="100%"/>
+					</div>
+					<form action="/addUserForm" th:action="@{/addUserForm}" id="form" enctype="multipart/form-data" method="POST">
+					<div class="adduser-uploadbtn">
+						<input class="form-control btn btn-success" type="button" id="example-text-input1"  
+							value="Upload image" onclick="$('#inputFile').click()">
+							<input type="file" accept="image/jpg, image/jpeg, image/png" name="image" id="inputFile" style="display:none" onchange="loadFile(event)"/>
+					</div>
+					
+				</div>
+				<div class="col-md-2"></div>
+			</div>
+		</div>
+
+		<div class="col-md-8">
+			<div>
+				<div class="kt-portlet">
+					<div class="kt-form">
+						<div style="padding:5% 0% 0% 5%">
+							
+								<div class="form-group row">
+									<label for="example-text-input" class="col-3 col-form-label">
+										Email <span class="redmarker">*</span>
+									</label>
+									<div class="col-8">
+										<input class="form-control" name="email" type="text" id="email" onkeydown="hideEmailError();" onblur="checkExistingEmail(this);validateEmail(this);">
+										<span id="emailError" th:utext="#{message.email.empty}" class="hiddenred"></span>
+										<span id="emailExistError" th:utext="#{message.email.exist}" class="hiddenred"></span>
+										<span id="emailFormatError" th:utext="#{message.email.format.error}" class="hiddenred"></span>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="example-text-input" class="col-3 col-form-label">
+										Full Name <span class="redmarker">*</span>
+									</label>
+									<div class="col-8">
+										<input class="form-control" name="fullName" type="text" id="fullName" onclick="hideFullNameError()">
+										<span id="fullNameError" th:utext="#{message.full.name.empty}" class="hiddenred"></span>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="exampleSelect1" class="col-3 col-form-label">
+										User Group <span class="redmarker">*</span>
+									</label>
+									<div class="col-6">
+	
+										<div class="dropdown">
+											<button
+												class="btn btn-secondary dropdown-toggle adduser-drop-width"
+												type="button" id="dropdownMenuButton" data-toggle="dropdown"
+												onclick="hideGroupsError()"
+												aria-haspopup="true" aria-expanded="false">Select
+												the User Groups</button>
+												<span id="groupsError" th:utext="#{message.groups.empty}" class="hiddenred"></span>
+											<div class="dropdown-menu adduser-drop-width"
+												aria-labelledby="dropdownMenuButton">
+												<div>
+													<div class="form-group row">
+	
+														<div class="col-md-1"></div>
+														<div class="col-md-10">
+															<input type="email" class="form-control"
+																aria-describedby="emailHelp"
+																placeholder="Search" onkeyup="searchGroups(this)">
+														</div>
+														<div class="col-md-1"></div>
+													</div>
+													<div class="form-group row">
+	
+														<div class="col-md-1"></div>
+														<div class="col-md-10">
+															<div class="kt-checkbox-list">
+																<div th:each="entry : ${groups.entrySet()}">
+																	<label class="kt-checkbox"> 
+																		<input name="groupCheckboxes" type="checkbox" th:value="${entry.key}" th:attr="data-name=${entry.value}"/> <label th:utext="${entry.value}" class="ml-2"></label> <span></span>
+		                                                            </label>
+	                                                            </div>
+	                                                            <input type="hidden" name="selectedGroupsIds[]" />
+	                                                            <input type="hidden" name="selectedGroupsNames" />
+	                                                            <input type="hidden" name="selectedDepartmentName" />
+	                                                            <input type="hidden" name="selectedJobTitleName" />
+															</div>
+															<div class="col-md-1"></div>
+														</div>	
+													</div>
+													<div style="text-align: center;">
+														<div class="kt-form__actions">
+															<button type="button" class="btn btn-add-default btn-sm"
+																id="btnAddNewUser">Add</button>
+															<button type="button" class="btn btn-cancel btn-sm">Cancel</button>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+	
+									</div>
+								</div>
+								<div class="row">
+									<label for="example-text-input" class="col-3 col-form-label"></label>
+									<div class="col-8">
+										<div class="selecteddisplay"></div>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="exampleSelect1" class="col-3 col-form-label">Department</label>
+									<div class="col-8">
+										<select class="form-control" style="height: auto" name="department" id="department">
+											<option value="0" th:utext="#{message.user.please.select}"></option>
+											<option th:each="entry : ${departments.entrySet()}" th:attr="data-name=${entry.value}" th:value="${entry.key}" th:text="${entry.value}"></option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="exampleSelect1" class="col-3 col-form-label">Job
+										Title</label>
+									<div class="col-8">
+										<select class="form-control" style="height: auto" name="jobTitle" id="jobTitle">
+											<option value="0" th:utext="#{message.user.please.select}"></option>
+											<option th:each="entry : ${jobTitles.entrySet()}" th:attr="data-name=${entry.value}" th:value="${entry.key}" th:text="${entry.value}"></option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="example-text-input" class="col-3 col-form-label">Mobile
+										No</label>
+									<div class="col-8">
+										<input class="form-control" type="text" name="mobileNumber" onBlur="checkMobileNo(this)" id="mobileNo">
+										<div id="mobileLengthError" class="red" style="display:none" th:utext="#{message.user.mobile.no.length.error}">Mobile number must be at least 8 digits.</div>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="exampleSelect1" class="col-3 col-form-label">Status</label>
+									<div class="col-8">
+										<div class="kt-radio-inline">
+											<label class="kt-radio"> <input type="radio"
+												name="status" value="Y" checked="checked">Active<span></span>
+											</label> <label class="kt-radio"> <input type="radio"
+												name="status" value="N">Inactive<span></span>
+											</label>
+	
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div>
+				<div class="kt-form__actions adduser-textright">
+					<button type="button" class="btn btn-add-default" id="saveBtn" 
+						data-target="#kt_modal_1" onclick="prepareConfirmation()">Save</button>
+					<button type="reset" class="btn btn-cancel" onclick="window.location.href='/menu/system/userListing'">Cancel</button>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<!-- end:: Content -->
+
+</div>
+
+<div class="modal fade" id="kt_modal_1" tabindex="-1" role="dialog"
+	aria-labelledby="exampleModalLabel" style="display: none;"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p th:utext="#{message.confirm.create.new.user}">You're processing to create new user with details information as below:</p>
+				<table border="0">
+					<caption class="d-none"></caption>
+					<tr>
+						<th scope="col" style="min-width:200px" th:utext="#{message.email}"></th>
+						<th scope="col"><span id="emailConfirm"></span></th>
+					</tr>
+					<tr>
+						<td th:utext="#{message.full.name}"></td>
+						<td><span id="fullNameConfirm"></span></td>
+					</tr>
+					<tr>
+						<td th:utext="#{message.mobile.no}"></td>
+						<td><span id="mobileNoConfirm"></span></td>
+					</tr>
+					<tr>
+						<td th:utext="#{message.user.group}"></td>
+						<td><span id="userGroupConfirm"></span></td>
+					</tr>
+					<tr>
+						<td th:utext="#{message.department}"></td>
+						<td><span id="departmentConfirm"></span></td>
+					</tr>
+					<tr>
+						<td th:utext="#{message.job.title}"></td>
+						<td><span id="jobTitleConfirm"></span></td>
+					</tr>
+					<tr>
+						<td th:utext="#{message.status}"></td>
+						<td><span id="statusConfirm"></span></td>
+					</tr>
+				</table>
+				<br/>
+				<p th:utext="#{message.create.new.user.confirm}"></p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-add-default" onclick="$(this).prop('disabled', true);$('#form').submit()">Create</button>
+				<button type="button" class="btn btn-cancel" data-dismiss="modal">Cancel</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="invalidFileModal" tabindex="-1" role="dialog"
+	aria-labelledby="exampleModalLabel" style="display: none;"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Invalid File</h5>
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p th:utext="#{message.invalid.file}">System does not support this uploaded file extension</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" onclick="$('#invalidFileModal').modal('hide');"><span th:utext="#{message.ok}">OK</span></button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div th:replace="common/footer"></div>

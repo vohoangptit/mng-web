@@ -1,0 +1,65 @@
+.icon-download {
+    cursor: pointer;
+    margin-left: 20px;
+    font-size: large;
+}
+
+.border-file-information {
+    border: 1px solid #dee2e6;
+    margin-bottom: 20px;
+}
+
+.text-file-information {
+    z-index: 2;
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    background: white;
+    font-weight: 500;
+}
+
+.search-padd{
+	padding-bottom: 2%;
+}
+
+.search-input{
+	padding-left: 8%;
+}
+
+.adduser-textright{
+	text-align: right;
+}
+
+.search-icon{
+    position: absolute;
+    top: 25%;
+    left: 5%;
+}
+
+.red {
+	color:red !important;
+}
+
+.selectchoice-tag{
+	border-radius: 1000px;
+    background-color: #ffffff;
+    border: solid 1px #00b9d1;
+    display: inline-block;
+    font-size: 14px;
+    position: relative;
+    margin: 0 0.41667em 1.41667em 0;
+    padding: 6px 30px 6px 20px;
+}
+
+.selectchoice-button{
+	border: 0;
+    cursor: pointer;
+    background: none;
+    font-size: 1.16667em;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    line-height: 1.28571em;
+    margin-top: -0.64286em;
+    color: #00b9d1;
+}

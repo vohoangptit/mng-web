@@ -1,0 +1,212 @@
+<div th:replace="common/header"></div>
+
+<link th:href="@{/css/custom/playbook/playbook-listing.css}"
+      href="../../css/custom/playbook/playbook-listing.css" rel="stylesheet"
+      type="text/css"/>
+
+<script th:inline="javascript">
+    var hasEditPermission = [[${#strings.contains(session.userProfile.permission, 'UPDATE_PLAYBOOK')}]];
+    var hasSendToApproval = [[${#strings.contains(session.userProfile.permission, 'SEND_PLAYBOOK_FOR_APPROVAL')}]];
+    var hasDeleteNewPermission = [[${#strings.contains(session.userProfile.permission, 'DELETE_PLAYBOOK(NEW_STATUS)')}]];
+    var hasDeletePermission = [[${#strings.contains(session.userProfile.permission, 'DELETE_APPROVED_&_REJECT_PLAYBOOK')}]];
+</script>
+
+<script th:src="@{/js/custom/playbook-listing.js}"
+        type="text/javascript"></script>
+
+<link
+        th:unless="${#strings.contains(session.userProfile.permission, 'VIEW_PLAYBOOK_LISTING')}"
+        th:href="@{/css/errors/403.css}" href="../../css/errors/403.css"
+        rel="stylesheet" type="text/css"/>
+
+<div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor">
+    <div style="padding: 0% 0% 0% 2%;">
+        <label style="margin:1% 0% 0% 0.5%">
+            <span style="font-weight:600; font-size:20px; color:#333333">Playbook Management</span>
+            <span style="font-weight:100; font-size:25px; color:#686868;">&nbsp|&nbsp</span>
+        </label>
+        <label style="margin:2% 0% 0% 0.5%">
+            <span> Home</span>
+            <span> &nbsp &gt; &nbsp</span>
+            <span> Master Data</span>
+            <span> &nbsp &gt; &nbsp</span>
+            <span style="color: #e1261c;"> Playbook Listing</span>
+        </label>
+    </div>
+    <!-- begin:: Content -->
+    <div class="kt-content  kt-grid__item kt-grid__item--fluid"
+         id="kt_content">
+
+        <div class="alert alert-light alert-elevate row">
+            <div class="col-md-12">
+                <br/>
+                <div class="row">
+                    <div class="col-md-12 row search-padd">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control search-input border-input"
+                                   placeholder="Filter by Playbook name, Status" id="generalSearch">
+                            <span class="search-icon"> <span>
+								<em class="la la-search"></em></span>
+							</span>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group date">
+                                <input placeholder="From (Last login date)" type="text"
+                                       class="form-control m_datepicker dt" id="DateFrom" name="DateFrom">
+                                <span> <em class="la la-calendar"></em>
+								</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group date">
+                                <input placeholder="To (Last login date)" type="text"
+                                       class="form-control m_datepicker dt" id="DateTo" name="DateTo">
+                                <span> <em class="la la-calendar"></em>
+								</span>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <a href="#" class="btn search-icon-listing btn-add-default"
+                               id="btnSearch"> <em class="la la-search search-icon-right"></em>
+                            </a>&nbsp; <a href="#" class="btn reset-icon-listing btn-default"
+                                          id="btnReset"> <em class="la la-refresh reset-icon-right"></em>
+                        </a>
+                        </div>
+                    </div>
+                    <div class="col-md-12 row search-padd">
+                        <div class="col-md-6 row">
+                            <div style="margin-left:1.5%"></div>
+                            <div class="col-md-5 row">
+                                <select class="form-control m-select2 m-input-filter"
+                                        id="createdBySelectd" multiple="multiple">
+                                </select>
+                            </div>
+                            <div class="col-md-1"></div>
+                            <div class="col-md-5 row">
+                                <select class="form-control m-select2" id="approvedBySelectd"
+                                        multiple="multiple">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="line-search"></div>
+                <div class="row">
+                    <div class="col-md-6">
+                        Total Number of Results found: <span class="totalNum"></span>
+                    </div>
+                    <div
+                            th:if="${#strings.contains(session.userProfile.permission, 'CREATE_PLAYBOOK')}"
+                            class="col-md-6 text-right">
+                        <a th:href="@{/menu/masterdata/playbook/detail}"
+                           class="btn btn-add-default btn-icon-sm"> <span><em
+                                class="la la-plus" style="color: white; font-weight: bolder"></em></span>
+                            <span>Create Playbook</span>
+                        </a>
+                    </div>
+                </div>
+                <br/>
+            </div>
+
+            <div class="col-md-12">
+                <div class="hideclass deletemessage" style="padding-top: 2%;">
+                    <div class="alert alert-success col-2" role="alert">
+                        <div class="alert-text" id="txtAction">Delete successfully</div>
+                    </div>
+                </div>
+
+                <div class="playbookListingDatatable" id="kt_datatable"></div>
+
+                <div>
+                    <table id="header-fixed"
+                           class="table m-table m-table--head-bg-accent">
+                        <caption class="d-none"></caption>
+                        <tr class="d-none">
+                            <th scope="col"></th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="modal" id="deleteSeclectedRecord" tabindex="-1"
+                 role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Delete Confirmation</h5>
+                            <button type="button" class="close" data-dismiss="modal"
+                                    aria-label="Close">
+                                <span aria-hidden="true">�</span>
+                            </button>
+                        </div>
+                        <div class="modal-body"></div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary"
+                                    data-dismiss="modal">
+                                <span>OK</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="kt_modal_Delete" tabindex="-1"
+                 role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
+                            <button type="button" class="close" data-dismiss="modal"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div style="display: none;">
+                                <input value="" id="deleteId">
+                            </div>
+                            <p>Do you want to Delete ?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-cancel"
+                                    data-dismiss="modal">No
+                            </button>
+                            <button type="button" class="btn btn-add-default" id="btnYesDelete">Yes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="kt_modal_Approval" tabindex="-1"
+                 role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Confirmation</h5>
+                            <button type="button" class="close" data-dismiss="modal"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div style="display: none;">
+                                <input value="" id="approvalId">
+                            </div>
+                            <p>Do you want to send this playbook for approval?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-cancel"
+                                    data-dismiss="modal">No
+                            </button>
+                            <button type="button" class="btn btn-add-default" id="btnYesApproval">Yes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- end:: Content -->
+
+</div>
+
+<div th:replace="common/footer"></div>
+
+
+
+
